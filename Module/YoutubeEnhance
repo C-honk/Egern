@@ -1,5 +1,4 @@
 name: YouTube视频
-description: 去除客户端广告精简UI界面
 
 map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
