@@ -1,0 +1,16 @@
+name: 订阅查询
+description: 机场订阅流量信息详情
+
+compat_arguments:
+  URL:
+  备注:
+compat_arguments_desc: "不同订阅地址连接用>符号"
+scriptings:
+- generic:
+    name: 订阅面板
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/Flowmon.js
+    timeout: 5
+    arguments:
+      _compat.$argument: "url={{{URL}}}&title={{{备注}}}"
+panels:
+- name: 订阅面板
