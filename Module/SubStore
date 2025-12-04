@@ -1,5 +1,4 @@
 name: 订阅管理
-description: 处理多机场订阅工具
 
 scriptings:
   - http_request:
