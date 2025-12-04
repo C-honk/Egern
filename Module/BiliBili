@@ -1,5 +1,4 @@
 name: 哔哩哔哩
-description: 去除客户端广告并精简UI界面
 
 body_rewrites:
 - response_jq:
