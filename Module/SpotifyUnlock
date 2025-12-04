@@ -1,5 +1,4 @@
 name: Spotify音乐
-description: 解锁订阅会员并去除广告
 
 map_locals:
 - match: ^https:\/\/spclient\.wg\.spotify\.com\/(watch-feed-entrypoints|ads\/v3\/ads|pendragon|merch-npv-service)
