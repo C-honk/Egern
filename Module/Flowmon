@@ -1,5 +1,4 @@
-name: 订阅查询
-description: 机场订阅流量信息详情
+name: 流量查询
 
 compat_arguments:
   URL:
