@@ -1,0 +1,36 @@
+name: 增強脚本合集
+
+map_locals:
+- match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
+  status_code: 200
+  body: ''
+- match: ^https:\/\/spclient\.wg\.spotify\.com\/(watch-feed-entrypoints|ads\/v3\/ads|pendragon|merch-npv-service)
+  status_code: 200
+  body: ''
+header_rewrites:
+- delete:
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$
+    name: if-none-match
+    type: request
+scriptings:
+- http_response:
+    name: 广告处理
+    match: ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$
+    script_url: https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js
+    arguments:
+      _compat.$argument: '{"blockUpload":true,"blockImmersive":true,"blockShorts":true}'
+    body_required: true
+    binary_body: true
+- http_response:
+    name: 解锁处理
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/UnlockPremium.js
+    body_required: true
+    binary_body: true
+mitm:
+  hostnames:
+    includes:
+    - '*.googlevideo.com'
+    - youtubei.googleapis.com
+    - '*-spclient.spotify.com'
+    - spclient.wg.spotify.com
