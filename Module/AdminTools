@@ -1,4 +1,4 @@
-name: 管理工具
+name: 订阅与脚本工具
 
 scriptings:
   - http_request:
