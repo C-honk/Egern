@@ -6,7 +6,7 @@ function desensitize(ip) {
   return maskIP ? ip.replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.*") : ip;
 }
 
-// 国家代码映射表（可根据需要扩展）
+// 国家代码映射表
 const countryMap = {
     "HK": "香港",
     "TW": "台湾",
@@ -47,28 +47,28 @@ const countryMap = {
 };
 
 const url = "http://ipinfo.io/json";
+
 $httpClient.get(url, (error, response, data) => {
-  if (error || !data) {
+    let content = "";
+    let iconColor = "#007AFF";
+
+    if (error) {
+        const status = response && response.status ? response.status : "请求失败";
+        content = `状态码：${status}`;
+        iconColor = "#FF3B30";
+    } else if (data) {
+        const obj = JSON.parse(data);
+        const ip = desensitize(obj.ip);
+        const org = obj.org ? obj.org.replace(/^AS\d+\s*/, "") : obj.org;
+        const country = countryMap[obj.country] || obj.country;
+
+        content = `IP：${ip} 服务：${org} 位置：${country}`;
+    }
+
     $done({
-      title: "节点信息",
-      content: "",
-      icon: "xmark.octagon.fill",
-      "icon-color": "#FF3B30"
+        title: "节点信息",
+        content,
+        icon: "globe.asia.australia.fill",
+        "icon-color": iconColor
     });
-    return;
-  }
-
-  const obj = JSON.parse(data);
-  const ip = desensitize(obj.ip);
-  const org = obj.org ? obj.org.replace(/^AS\d+\s*/, "") : obj.org;
-  const country = countryMap[obj.country] || obj.country;
-
-  const content =`IP：${ip}服务：${org}位置：${country}`;
-
-  $done({
-    title: "节点信息",
-    content,
-    icon: "globe.asia.australia.fill",
-    "icon-color": "#007AFF"
-  });
 });
