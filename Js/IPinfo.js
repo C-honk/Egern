@@ -48,6 +48,12 @@ const countryMap = {
 
 const url = "http://ipinfo.io/json";
 
+let latency = null;
+const startTime = Date.now();
+$httpClient.get("http://www.google.com/generate_204", () => {
+    latency = Date.now() - startTime;
+});
+
 $httpClient.get(url, (error, response, data) => {
     let content = "";
     let iconColor = "#007AFF";
@@ -61,7 +67,7 @@ $httpClient.get(url, (error, response, data) => {
         const org = obj.org ? obj.org.replace(/^AS\d+\s*/, "") : obj.org;
         const country = countryMap[obj.country] || obj.country;
 
-        content = `IP：${ip}\n服务：${org}\n位置：${country}`;
+        content = `IP：${ip}\n服务：${org}\n位置：${country}${latency !== null ? " " + latency + "ms" : ""}`;
     }
 
     $done({
