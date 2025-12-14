@@ -6,7 +6,6 @@ function desensitize(ip) {
   return maskIP ? ip.replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.*") : ip;
 }
 
-// 国家代码映射表
 const countryMap = {
     "HK": "香港",
     "TW": "台湾",
@@ -56,7 +55,7 @@ $httpClient.get("http://www.google.com/generate_204", () => {
 
 $httpClient.get(url, (error, response, data) => {
     let content = "";
-    let iconColor = "#007AFF";
+    let iconColor = "#047FFF";
 
     if (response && response.status !== 200) {
         content = `状态码：${response.status}`;
@@ -67,7 +66,7 @@ $httpClient.get(url, (error, response, data) => {
         const org = obj.org ? obj.org.replace(/^AS\d+\s*/, "") : obj.org;
         const country = countryMap[obj.country] || obj.country;
 
-        content = `IP：${ip}\n服务：${org}\n位置：${country}${latency !== null ? " " + latency + "ms" : ""}`;
+        content = `IP：${ip}\n位置：${country}${latency !== null ? " " + latency + "ms" : ""}\n服务：${org}`;
     }
 
     $done({
