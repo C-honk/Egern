@@ -55,7 +55,7 @@ $httpClient.get("http://www.google.com/generate_204", () => {
 
 $httpClient.get(url, (error, response, data) => {
     let content = "";
-    let iconColor = "#047FFF";
+    let iconColor = "#00A4FB";
 
     if (response && response.status !== 200) {
         content = `状态码：${response.status}`;
