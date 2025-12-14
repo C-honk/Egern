@@ -3,7 +3,7 @@ const maskValue = argStr.split("=")[1];
 const maskIP = maskValue !== "NO";
 
 function desensitize(ip) {
-  return maskIP ? ip.replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.?") : ip;
+  return maskIP ? ip.replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.-") : ip;
 }
 
 const countryMap = {
@@ -55,7 +55,7 @@ $httpClient.get("http://www.google.com/generate_204", () => {
 
 $httpClient.get(url, (error, response, data) => {
     let content = "";
-    let iconColor = "#00A4FB";
+    let iconColor = "#00D2FF";
 
     if (response && response.status !== 200) {
         content = `状态码：${response.status}`;
