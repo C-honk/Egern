@@ -52,9 +52,8 @@ $httpClient.get(url, (error, response, data) => {
     let content = "";
     let iconColor = "#007AFF";
 
-    if (error) {
-        const status = response && response.status ? response.status : "请求失败";
-        content = `状态码：${status}`;
+    if (response && response.status !== 200) {
+        content = `状态码：${response.status}`;
         iconColor = "#FF3B30";
     } else if (data) {
         const obj = JSON.parse(data);
@@ -62,7 +61,7 @@ $httpClient.get(url, (error, response, data) => {
         const org = obj.org ? obj.org.replace(/^AS\d+\s*/, "") : obj.org;
         const country = countryMap[obj.country] || obj.country;
 
-        content = `IP：${ip} 服务：${org} 位置：${country}`;
+        content = `IP：${ip}\n服务：${org}\n位置：${country}`;
     }
 
     $done({
