@@ -3,7 +3,7 @@ const maskValue = argStr.split("=")[1];
 const maskIP = maskValue !== "NO";
 
 function desensitize(ip) {
-  return maskIP ? ip.replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.-") : ip;
+  return maskIP ? ip.replace(/(\d+)\.(\d+)\.\d+\.\d+$/, "$1.$2.-.-") : ip;
 }
 
 const countryMap = {
