@@ -1,0 +1,13 @@
+name: 节点信息
+
+compat_arguments:
+  隐藏IP:   
+scriptings:
+- generic:
+    name: 节点面板
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/IPinfo.js
+    arguments:
+        _compat.$argument: "maskIP={{{隐藏IP}}}"
+    timeout: 5
+panels:
+- name: 节点面板
