@@ -60,7 +60,7 @@ function generateText(data, title) {
 
   const lines = [];
   if (title) lines.push(`机场：${title}`);
-  lines.push(`流量：${formatBytes(used)} - ${formatBytes(total, 0)}`);
+  lines.push(`流量：${formatBytes(used)} ⇆ ${formatBytes(total, 0)}`);
 
   if (data.expire) {
     const d = new Date(data.expire * 1000);
@@ -96,7 +96,7 @@ function generateText(data, title) {
   }
 
   $done({
-    title: "订阅流量",
+    title: "订阅信息",
     content: texts.join("\n\n"),
     icon: icon,
     "icon-color": iconColor,
