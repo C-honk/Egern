@@ -1,4 +1,4 @@
-name: 订阅与脚本工具
+name: 模块工具合集
 
 scriptings:
   - http_request:
@@ -11,6 +11,7 @@ scriptings:
       match: ^https:\/\/sub\.store
       script_url: https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js
       body_required: true
+
   - http_request:
       name: 转换前端
       match: ^https:\/\/script\.hub\/($|edit\/|reload)
@@ -20,13 +21,14 @@ scriptings:
       match: ^https:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module)
       script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/Rewrite-Parser.js
   - http_request:
-      name: 规则集转换
+      name: 规则转换
       match: ^https:\/\/script\.hub\/file\/_start_\/.+type=rule-set
       script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/rule-parser.js
   - http_request:
       name: 脚本转换
       match: ^https:\/\/script\.hub\/convert\/
       script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js
+
 mitm:
   hostnames:
     includes:
