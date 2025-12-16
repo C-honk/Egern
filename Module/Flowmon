@@ -1,4 +1,4 @@
-name: 流量查询
+name: 订阅查询
 
 compat_arguments:
   URL:
