@@ -1,4 +1,4 @@
-name: 增強脚本合集
+name: 脚本合集
 
 map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
@@ -16,7 +16,7 @@ header_rewrites:
 
 scriptings:
 - http_response:
-    name: YouTube广告处理
+    name: YouTube
     match: ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$
     script_url: https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js
     arguments:
@@ -25,7 +25,7 @@ scriptings:
     binary_body: true
 
 - http_response:
-    name: Spotify解锁处理
+    name: Spotify
     match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/UnlockPremium.js
     body_required: true
