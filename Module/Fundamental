@@ -1,4 +1,4 @@
-name: 脚本与订阅工具
+name: 基础工具
 
 scriptings:
   - http_request:
