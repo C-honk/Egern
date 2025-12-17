@@ -1,4 +1,4 @@
-name: DNS拦截
+name: HTTPDNS拦截
 
 rules:
 - domain:
