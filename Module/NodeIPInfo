@@ -7,7 +7,7 @@ compat_arguments_desc: 开启隐藏IP填写true\n开启风险评估填写true
 scriptings:
 - generic:
     name: 节点面板
-    script_url: J
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/iPinfo.js
     timeout: 5
     arguments:
       _compat.$argument: "maskIP={{{IP脱敏}}}&enableRisk={{{IP风险}}}"
