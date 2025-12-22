@@ -65,7 +65,7 @@ $httpClient.get(url, function(error, response, body) {
 
         if (maskIP) ip = maskIPFn(ip);
 
-        content = `地区：${countryCN}\nIP址：${ip}`;
+        content = `地区：${countryCN}(${data.country})\nIP址：${ip}`;
     }
 
     $done({
