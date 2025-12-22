@@ -1,14 +1,15 @@
 name: IP信息
 
 compat_arguments:
-  脱敏IP:
-compat_arguments_desc: 隐藏IP段填写 true 
+  IP脱敏:
+  IP风险:
+compat_arguments_desc: 开启隐藏IP填写true\n开启风险评估填写true
 scriptings:
 - generic:
     name: 节点面板
-    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/iPinfo.js
+    script_url: J
     timeout: 5
     arguments:
-      _compat.$argument: "maskIP={{{脱敏IP}}}"
+      _compat.$argument: "maskIP={{{IP脱敏}}}&enableRisk={{{IP风险}}}"
 panels:
-- name: 节点面板
+- name: 节点面
