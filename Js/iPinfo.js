@@ -28,10 +28,10 @@ function maskIPFn(ip) {
 
 function riskLevel(str) {
     str = str.toLowerCase();
-    if (str.indexOf("very high") !== -1) return "极高风险IP";
-    if (str.indexOf("high") !== -1) return "高级风险IP";
-    if (str.indexOf("medium") !== -1) return "中级风险IP";
-    if (str.indexOf("low") !== -1) return "低级风险IP";
+    if (str.indexOf("very high") !== -1) return "极高";
+    if (str.indexOf("high") !== -1) return "高";
+    if (str.indexOf("medium") !== -1) return "中";
+    if (str.indexOf("low") !== -1) return "低";
     return "";
 }
 
@@ -75,7 +75,7 @@ $httpClient.get(url, function(error, response, body) {
             iconColor = errorColor;
         } else {
             const risk = parseRisk(html);
-            if (risk) finalContent += `\n评估：${risk}`;
+            if (risk) finalContent += `\n风险：${risk}`;
         }
         $done({ title, content: finalContent, icon: iconName, "icon-color": iconColor });
     });
