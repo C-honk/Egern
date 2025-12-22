@@ -27,7 +27,7 @@ scriptings:
 - http_response:
     name: Spotify
     match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
-    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/UnlockPremium.js
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/Premium.js
     body_required: true
     binary_body: true
 
