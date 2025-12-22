@@ -1,11 +1,9 @@
 const url = "http://ipinfo.io/json";
-const maskIP = false;
 
+let maskIP = false;
 if (typeof $argument !== "undefined") {
-    const match = $argument.match(/maskIP\s*=\s*(true|false)/i);
-    if (match) {
-        maskIP = match[1].toLowerCase() === "true";
-    }
+    const arg = $argument.trim().toLowerCase();
+    if (arg === "true" || arg === "maskip=true") maskIP = true;
 }
 
 const countryMap = {
@@ -46,33 +44,28 @@ const countryMap = {
     "VN": "越南",
     "ID": "印度尼西亚"
 };
+
 function maskIPFn(ip) {
     if (!ip) return "";
     const parts = ip.split(".");
-    if (parts.length === 4) {
-        return parts.slice(0, 3).join(".") + ".*";
-    }
-    return ip;
+    return parts.length === 4 ? parts.slice(0, 3).join(".") + ".*" : ip;
 }
 
-$httpClient.get(url, function (error, response, body) {
-    let iconColor = "#007AFF";
+$httpClient.get(url, function(error, response, body) {
     let content = "";
+    let iconColor = "#007AFF";
 
     if (error || !body) {
+        content = `请求失败：${error.message || error}`;
         iconColor = "#FF3B30";
-        content = "请求失败";
     } else {
         const data = JSON.parse(body);
         let ip = data.ip;
-        const countryCode = data.country;
-        const countryCN = countryMap[countryCode] || countryCode;
+        const countryCN = countryMap[data.country] || data.country;
 
-        if (maskIP) {
-            ip = maskIPFn(ip);
-        }
+        if (maskIP) ip = maskIPFn(ip);
 
-        content = "地区：" + countryCN + "\n" + "IP址：" + ip;
+        content = `地区：${countryCN}\nIP址：${ip}`;
     }
 
     $done({
