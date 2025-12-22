@@ -53,7 +53,7 @@ function maskIPFn(ip) {
 
 $httpClient.get(url, function(error, response, body) {
     let content = "";
-    let iconColor = "#007AFF";
+    let iconColor = "#00FEF2";
 
     if (error || !body) {
         content = `请求失败：${error.message || error}`;
