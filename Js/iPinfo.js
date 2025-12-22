@@ -29,9 +29,9 @@ function maskIPFn(ip) {
 function riskLevel(str) {
     str = str.toLowerCase();
     if (str.indexOf("very high") !== -1) return "极高";
-    if (str.indexOf("high") !== -1) return "高";
-    if (str.indexOf("medium") !== -1) return "中";
-    if (str.indexOf("low") !== -1) return "低";
+    if (str.indexOf("high") !== -1) return "高危";
+    if (str.indexOf("medium") !== -1) return "中等";
+    if (str.indexOf("low") !== -1) return "安全";
     return "";
 }
 
