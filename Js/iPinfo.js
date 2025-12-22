@@ -63,7 +63,7 @@ $httpClient.get(url, function(error, response, body) {
     let countryCN = countryMap[data.country] || data.country;
     if (maskIP) ip = maskIPFn(ip);
 
-    let finalContent = `地区：${countryCN} ⎻ ${data.country}\nIP址：${ip}`;
+    let finalContent = `地区：${countryCN} ${data.country}\nIP址：${ip}`;
 
     if (!enableRisk) {
         $done({ title, content: finalContent, icon: iconName, "icon-color": iconColor });
