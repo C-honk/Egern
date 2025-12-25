@@ -44,7 +44,7 @@ function parseRisk(html) {
     return riskLevel(risk);
 }
 
-const title = "代理出站";
+const title = "使用节点";
 const defaultColor = "#00DFFF";
 const errorColor = "#FF3B30";
 const iconName = "globe.asia.australia.fill";
