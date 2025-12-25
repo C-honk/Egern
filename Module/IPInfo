@@ -3,9 +3,7 @@ name: IP信息
 compat_arguments:
   IP脱敏:
   IP风险:
-compat_arguments_desc: |
-  开启IP隐藏填写true
-  开启IP风险填写true
+compat_arguments_desc: 开启IP隐藏和风险检测填写:true
 scriptings:
 - generic:
     name: IP面板
