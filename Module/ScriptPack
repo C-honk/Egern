@@ -1,4 +1,5 @@
 name: 脚本合集
+description: 去广告和解锁模块已收录YouTubeMusic Spotify音乐 更新于2025.12.26
 
 map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
