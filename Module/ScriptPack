@@ -1,5 +1,5 @@
 name: 脚本合集
-description: 去广告和解锁模块已收录YouTubeMusic Spotify音乐 哔哩哔哩 更新于2025.12.26
+description: 已收录YouTubeMusic Spotify音乐 哔哩哔哩 更新于2025.12.27
 
 body_rewrites:
 - response_jq:
