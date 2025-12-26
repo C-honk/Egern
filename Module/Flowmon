@@ -1,4 +1,5 @@
 name: 订阅查询
+description: 查看机场订阅流量内容 通过参数支持不同订阅且无限制数量
 
 compat_arguments:
   URL:
@@ -8,7 +9,7 @@ scriptings:
 - generic:
     name: 订阅面板
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/Flowmon.js
-    timeout: 5
+    timeout: 10
     arguments:
       _compat.$argument: "url={{{URL}}}&title={{{备注}}}"
 panels:
