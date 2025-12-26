@@ -1,4 +1,5 @@
 name: 基础工具
+description: 整合脚本与规则转换以及机场订阅自定义管理
 
 scriptings:
   - http_request:
