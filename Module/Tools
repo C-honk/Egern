@@ -1,5 +1,5 @@
-name: 基础工具
-description: 整合脚本与规则转换以及机场订阅自定义管理
+name: 管理工具
+description: 基础的ScriptHub脚本转换和Sub-Store订阅管理 
 
 scriptings:
   - http_request:
