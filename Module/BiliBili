@@ -1,4 +1,5 @@
 name: 哔哩哔哩
+description: 增强客户端去除广告精简操作界面优化体验
 
 body_rewrites:
 - response_jq:
