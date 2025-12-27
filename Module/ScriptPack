@@ -1,5 +1,5 @@
 name: 脚本合集
-description: 已收录YouTubeMusic Spotify音乐 哔哩哔哩 更新于2025.12.27
+description: 已收录YouTubeMusic Spotify音乐 哔哩哔哩 网易云音乐 更新于2025.12.28
 
 body_rewrites:
 - response_jq:
@@ -33,23 +33,31 @@ map_locals:
   status_code: 200
   body: ''
 
+- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(view\.v1\.View\/TFInfo|viewunite\.v1\.View\/ViewEndPage)$
+  headers:
+    Content-Type: text/plain
+  body: AAAAAAA=
+  binary: true
 - match: ^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials
   status_code: 200
   body: ''
-- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$
+
+- match: ^https:\/\/(ipv4|interface\d?)\.music\.163\.com\/(eapi\/(delivery\/(batch-)?deliver|moment\/tab\/info\/|side-bar\/mini-program\/music-service\/account|yunbei\/account\/entrance\/|community\/friends\/fans-group\/artist\/group\/|mine\/applet\/redpoint|music\/songshare\/text\/recommend\/|resniche\/position\/play\/new\/|resniche\/tspopup\/show|resource\/comments?\/musiciansaid\/|user\/sub\/artist|ios\/version|mlivestream\/entrance\/playpage\/|link\/position\/show\/strategy|link\/scene\/show\/resource|v1\/content\/exposure\/comment\/banner\/|my\/podcast\/tab\/recommend)|w?eapi\/(activity\/bonus\/playpage\/time\/query|resource-exposure\/|search\/(chart\/|rcmd\/keyword\/|specialkeyword\/)))
   status_code: 200
-  body: AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA
-  binary: true
-- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$ 
-  status_code: 200
-  body: AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=
-  binary: true
+  body: ''
 
 header_rewrites:
 - delete:
     match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$
     name: if-none-match
     type: request
+
+- replace:
+    match: ^https?:\/\/(ipv4|interface\d?)\.music\.163\.com\/e?api\/(?:batch|homepage\/block\/page|v\d\/(?:resource\/comment\/floor\/get|user\/detail\/\d+|discovery\/recommend\/songs|playlist\/detail)|link\/page\/rcmd\/(?:block\/resource\/multi\/refresh|resource\/show)|user\/follow\/users\/mixed\/get|link\/home\/framework\/tab|link\/position\/show\/resource|link\/page\/discovery\/resource\/show|mine\/(?:collect|rn)\/header\/info|vipnewcenter\/app\/resource\/newaccountpage|music-vip-membership\/(?:client|front)\/vip\/info|playlist\/privilege|search\/complex\/page)
+    name: x-aeapi
+    value: 'false'
+    type: request
+
 
 scriptings:
 - http_response:
@@ -75,14 +83,21 @@ scriptings:
     body_required: true
     binary_body: true
 
+- http_response:
+    name: 网易云音乐
+    match: ^https:\/\/(ipv4|interface\d?)\.music\.163\.com\/eapi\/(link\/page\/discovery\/resource\/show|(?:batch|v2\/resource\/comment\/floor\/get))
+    script_url: https://raw.githubusercontent.com/sooyaaabo/Loon/main/Script/NeteaseMusic/NeteaseMusicAds.js
+    body_required: true
+    binary_body: true
 
 mitm:
   hostnames:
     includes:
-    - '*.googlevideo.com'
     - youtubei.googleapis.com
+    - '*.googlevideo.com'
     - '*-spclient.spotify.com'
     - spclient.wg.spotify.com
     - app.bilibili.com
     - api.bilibili.com
     - grpc.biliapi.net
+    - '*.music.163.com'
