@@ -1,10 +1,10 @@
 name: 订阅查询
-description: 查看机场订阅流量内容 通过参数支持不同订阅且无限制数量
+description: 查看机场订阅流量内容 通过参数支持不同订阅且无限制
 
 compat_arguments:
   URL:
   备注:
-compat_arguments_desc: "不同订阅地址连接用>符号"
+compat_arguments_desc: "不同订阅地址和备注名使用 > 符"
 scriptings:
 - generic:
     name: 订阅面板
