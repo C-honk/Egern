@@ -1,5 +1,5 @@
 name: 实用工具
-description: 基础的ScriptHub脚本转换和Sub-Store订阅管理 
+description: 高效的ScriptHub脚本转换和Sub-Store机场订阅管理
 
 scriptings:
   - http_request:
