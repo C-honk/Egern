@@ -1,0 +1,25 @@
+name: 脚本转换
+description: 支持其他代理工具的脚本模块规则转换成Egern可以使用的配置
+
+scriptings:
+  - http_request:
+      name: 转换前端
+      match: ^https:\/\/script\.hub\/($|edit\/|reload)
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-hub.js
+  - http_request:
+      name: 重写转换
+      match: ^https:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module)
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/Rewrite-Parser.js
+  - http_request:
+      name: 规则转换
+      match: ^https:\/\/script\.hub\/file\/_start_\/.+type=rule-set
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/rule-parser.js
+  - http_request:
+      name: 脚本转换
+      match: ^https:\/\/script\.hub\/convert\/
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js
+  
+mitm:
+  hostnames:
+    includes:
+    - script.hub
