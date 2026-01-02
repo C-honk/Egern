@@ -1,3 +1,5 @@
+//代理DNS解析
+
 DOMAIN-KEYWORD,google
 DOMAIN-KEYWORD,openai
 DOMAIN-KEYWORD,chatgpt
