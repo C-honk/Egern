@@ -61,7 +61,7 @@ function generateText(data, title) {
 
   const lines = [];
   if (title) lines.push(`机场：${title}`);
-  lines.push(`流量：${percent}% ⮂ ${formatBytes(used)} Ⅰ ${formatBytes(total,0)}`);
+  lines.push(`流量：${percent}% Ⅰ ${formatBytes(used)} ⮂ ${formatBytes(total,0)}`);
   if (data.expire) {
     const d = new Date(data.expire * 1000);
     lines.push(`到期：${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`);
