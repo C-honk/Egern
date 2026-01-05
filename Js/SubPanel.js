@@ -109,6 +109,6 @@ function generateText(data, title) {
     title: "订阅信息",
     content: texts.join("\n\n"),
     icon: icon,
-    "icon-color": hasError ? "#FF3B30" : "#2BF2A2",
+    "icon-color": hasError ? "#FF3B30" : "#29EA9C",
   });
 })();
