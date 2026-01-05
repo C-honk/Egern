@@ -1,45 +1,40 @@
-const args = getArgs();
-const urls = args.url ? args.url.split("@").map(u => u.trim()).filter(u => u) : [];
-const titles = args.title ? args.title.split("@").map(t => t.trim()) : [];
-const timeout = args.timeout ? parseInt(args.timeout) : 3000;
+const params = parseParams();
+const urls = params.url ? params.url.split("@").map(u => u.trim()).filter(u => u) : [];
+const titles = params.title ? params.title.split("@").map(t => t.trim()) : [];
+const timeout = params.timeout ? parseInt(params.timeout) : 3000;
 
-function getArgs() {
+function parseParams() {
   const result = {};
   if ($argument) {
     $argument.split("&").forEach(p => {
-      const index = p.indexOf("=");
-      const key = p.substring(0, index);
-      const value = p.substring(index + 1);
-      result[key] = decodeURIComponent(value);
+      const [key, value] = p.split("=");
+      if (key) result[key] = decodeURIComponent(value || "");
     });
   }
   return result;
 }
 
-function fetchUsage(url) {
+function fetchSubscription(url) {
   return new Promise(resolve => {
     $httpClient.get(
       { url, headers: { "User-Agent": "clash.meta/v1.19.16" }, timeout },
       (err, resp) => {
-        if (err) {
-          resolve({ status: 0, error: err });
-        } else {
-          resolve(resp);
-        }
+        if (err) resolve({ status: 0, error: err });
+        else resolve(resp);
       }
     );
   });
 }
 
-function parseUsage(headers) {
-  const headerKey = Object.keys(headers).find(k => k.toLowerCase() === "subscription-userinfo");
-  if (!headerKey || !headers[headerKey]) return null;
-  const data = {};
-  headers[headerKey].split(";").forEach(p => {
+function parseSubscriptionInfo(headers) {
+  const key = Object.keys(headers).find(k => k.toLowerCase() === "subscription-userinfo");
+  if (!key || !headers[key]) return null;
+  const info = {};
+  headers[key].split(";").forEach(p => {
     const [k, v] = p.trim().split("=");
-    if (k && v) data[k] = parseInt(v);
+    if (k && v) info[k] = parseInt(v);
   });
-  return data;
+  return info;
 }
 
 function formatBytes(bytes, fixed = 2) {
@@ -53,22 +48,23 @@ function formatBytes(bytes, fixed = 2) {
   return fixed === 0 ? Math.floor(num) + units[i] : num.toFixed(fixed) + units[i];
 }
 
-function generateText(data, title) {
-  if (!data) return "";
-  const used = (data.upload || 0) + (data.download || 0);
-  const total = data.total || 0;
-  const percent = total > 0 ? Math.floor((1 - used / total) * 100) : 0;
+function generateSubscriptionText(info, title) {
+  if (!info) return "";
+  const used = (info.upload || 0) + (info.download || 0);
+  const total = info.total || 0;
+  const percent = total > 0 ? Math.floor((used / total) * 100) : 0;
 
   const lines = [];
   if (title) lines.push(`机场：${title}`);
   lines.push(`流量：${percent}% Ⅰ ${formatBytes(used)} ⮂ ${formatBytes(total,0)}`);
-  if (data.expire) {
-    const d = new Date(data.expire * 1000);
+  if (info.expire) {
+    const d = new Date(info.expire * 1000);
     lines.push(`到期：${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`);
   }
   return lines.join("\n");
 }
 
+// 主逻辑
 (async () => {
   let texts = [];
   let hasError = false;
@@ -78,7 +74,7 @@ function generateText(data, title) {
     texts.push("未填写订阅");
     hasError = true;
   } else {
-    const results = await Promise.all(urls.map(u => fetchUsage(u)));
+    const results = await Promise.all(urls.map(u => fetchSubscription(u)));
     for (let i = 0; i < results.length; i++) {
       const r = results[i];
       const title = titles[i] || `订阅${i + 1}`;
@@ -95,9 +91,9 @@ function generateText(data, title) {
         continue;
       }
 
-      const data = parseUsage(r.headers || {});
-      if (data) {
-        texts.push(generateText(data, title));
+      const info = parseSubscriptionInfo(r.headers || {});
+      if (info) {
+        texts.push(generateSubscriptionText(info, title));
       } else {
         texts.push(`${title} 非机场订阅或无流量信息`);
         hasError = true;
