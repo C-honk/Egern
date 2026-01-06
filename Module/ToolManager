@@ -33,4 +33,4 @@ mitm:
   hostnames:
     includes:
     - script.hub
-    - sub.stor
+    - sub.store
