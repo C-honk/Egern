@@ -1,4 +1,4 @@
-const mask = $argument.includes("mask=ON");
+const mask = $argument.includes("mask=true");
 
 $httpClient.get({url: "http://ip-api.com/json/?lang=zh-CN",timeout: 5000},(err, resp, body) => {
     let content,iconColor;
