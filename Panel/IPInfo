@@ -1,5 +1,5 @@
 name: 节点信息
-description: 提供查看代理节点IP落地信息 使用参数ON隐藏IP段
+description: 提供查看代理节点IP落地信息 使用参数true隐藏IP段
 
 compat_arguments:
   IP隐藏:
