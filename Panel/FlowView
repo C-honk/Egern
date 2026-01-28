@@ -1,0 +1,17 @@
+name: 订阅查询
+description: 提供查看机场订阅流量使用参数 @ 添加不同机场订阅
+
+compat_arguments:
+  地址:
+  备注:
+  超时:
+
+scriptings:
+- generic:
+    name: 订阅面板
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/SubPanel.js
+    arguments:
+      _compat.$argument: "url={{{地址}}}&title={{{备注}}}&timeout={{{超时}}}"
+
+panels:
+- name: 订阅面板
