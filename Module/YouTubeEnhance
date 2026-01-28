@@ -1,0 +1,23 @@
+name: YouTube视频
+description: 精简客户端首页UI屏蔽推荐广告贴片广告以及音乐客户端
+
+map_locals:
+- match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
+  status_code: 200
+  body: ''
+
+scriptings:
+- http_response:
+    name: YouTube
+    match: ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$
+    script_url: https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/youtube.response.js
+    arguments:
+      _compat.$argument: '{"blockUpload":true,"blockImmersive":true,"blockShorts":true}'
+    body_required: true
+    binary_body: true
+
+mitm:
+  hostnames:
+    includes:
+    - youtubei.googleapis.com
+    - '*.googlevideo.com'
