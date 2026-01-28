@@ -1,0 +1,45 @@
+name: BiliBili视频
+description: 精简客户端UI优化首页屏蔽推荐广告评论贴片广告优化我的页面
+
+body_rewrites:
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(list|show|event\/list2)\?
+    filter: .data|= with_entries(if .key | IN("show", "event_list") then .value = [] else . end)
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/search
+    filter: .data|= map(select(.type!="recommend")|del(.search_ranking_meta))
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\?
+    filter: .data.items|= map(select(.rcmd_reason=="竖屏" or .card_goto=="av" ))
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story
+    filter: .data.items|= map(select(.goto=="vertical_av"))
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/tab\/v2
+    filter: .data.tab|= [(.[]|select(.id==40)),(.[]|select(.id==41)),(.[]|select(.id==3502)),(.[]|select(.id==3503)),(.[]|select(.id==39))]|.data.bottom|=map(select(.id|IN(177,179,181)))|.data.top|=map(select(.id==3510))|.data.top_more=[]|.data.top_left=[]
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\?
+    filter: .data.sections_v2|= map(if .style==1 and .items[0].id>=396 and .items[0].id<=399 then . elif .style==2 then .items |= map(select(.id==407 or .id==410)|if .id==410 then .title="我的设置" else . end)|del(.title) else empty end) | .data.modular_vip_section={}
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\/ipad
+    filter: .data.ipad_recommend_sections|= map(select(.id|IN(758,759,760,792,793,2542,794)|not))|.data.ipad_more_sections|=map(select(.id|IN(1070,965)|not)|if .id==798 then .title="我的设置" else . end)|del(.data.ipad_upper_sections)
+
+map_locals:
+- match: ^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials
+  status_code: 200
+  body: ''
+
+scriptings:
+- http_response:
+    name: 哔哩哔哩
+    match: ^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.(app\.(show\.v1\.Popular\/Index|dynamic\.v2\.Dynamic\/DynAll|view(?:unite)?\.v1\.View\/(View|ViewProgress|RelatesFeed)|playurl\.v1\.PlayURL\/PlayView|playerunite\.v1\.Player\/PlayViewUnite)|polymer\.app\.search\.v1\.Search\/SearchAll|main\.community\.reply\.v1\.Reply\/MainList|pgc\.gateway\.player\.v2\.PlayURL\/PlayView)$
+    script_url: https://raw.githubusercontent.com/kokoryh/Sparkle/master/dist/bilibili.protobuf.response.js
+    body_required: true
+    binary_body: true
+
+mitm:
+  hostnames:
+    includes:
+    - app.bilibili.com
+    - api.bilibili.com
+    - grpc.biliapi.net
