@@ -1,0 +1,15 @@
+name: 节点信息
+description: 提供查看代理节点IP落地信息使用参数 ON/OFF 隐藏IP
+
+compat_arguments:
+  IP隐藏:
+
+scriptings:
+- generic:
+    name: IP面板
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/NodePanel.js
+    arguments:
+      _compat.$argument: "mask={{{IP隐藏}}}"
+   
+panels:
+- name: IP面板
