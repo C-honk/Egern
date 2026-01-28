@@ -1,0 +1,27 @@
+name: Spotify音乐
+description: 屏蔽插播广告切换歌曲广告以及其他广告解锁订阅权限
+
+map_locals:
+- match: ^https:\/\/spclient\.wg\.spotify\.com\/(watch-feed-entrypoints|ads\/v3\/ads|pendragon|merch-npv-service)
+  status_code: 200
+  body: ''
+
+header_rewrites:
+- delete:
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$
+    name: if-none-match
+    type: request
+
+scriptings:
+- http_response:
+    name: Spotify
+    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
+    script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/PremiumUnlock.js
+    body_required: true
+    binary_body: true
+
+mitm:
+  hostnames:
+    includes:
+    - '*-spclient.spotify.com'
+    - spclient.wg.spotify.com
