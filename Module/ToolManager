@@ -1,0 +1,36 @@
+name: 订阅与脚本管理
+description: 提供使用订阅节点本地部署管理和其脚本模块规则转换成Egern使用
+
+scriptings:
+  - http_request:
+      name: 转换前端
+      match: ^https:\/\/script\.hub\/($|edit\/|reload)
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-hub.js
+  - http_request:
+      name: 重写转换
+      match: ^https:\/\/script\.hub\/file\/_start_\/.+type=(?:qx-rewrite|surge-module|loon-plugin|all-module)
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/Rewrite-Parser.js
+  - http_request:
+      name: 规则转换
+      match: ^https:\/\/script\.hub\/file\/_start_\/.+type=rule-set
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/rule-parser.js
+  - http_request:
+      name: 脚本转换
+      match: ^https:\/\/script\.hub\/convert\/
+      script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js
+  - http_request:
+      name: 订阅后端
+      match: ^https:\/\/sub\.store\/((download)|api\/(preview|sync|(utils\/node-info)))
+      script_url: https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js
+      body_required: true
+  - http_request:
+      name: 订阅前端
+      match: ^https:\/\/sub\.store
+      script_url: https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js
+      body_required: true
+
+mitm:
+  hostnames:
+    includes:
+    - script.hub
+    - sub.store
