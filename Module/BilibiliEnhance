@@ -22,7 +22,7 @@ body_rewrites:
     filter: .data.sections_v2|= map(if .style==1 and .items[0].id>=396 and .items[0].id<=399 then . elif .style==2 then .items |= map(select(.id==407 or .id==410)|if .id==410 then .title="我的设置" else . end)|del(.title) else empty end) | .data.modular_vip_section={}
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\/ipad
-    filter: .data.ipad_recommend_sections|= map(select(.id|IN(758,759,760,792,793,2542,794)|not))|.data.ipad_more_sections|=map(select(.id|IN(1070,965)|not)|if .id==798 then .title="我的设置" else . end)|del(.data.ipad_upper_sections)
+    filter: .data.ipad_recommend_sections|= map(select(.id|IN(758,759,760,792,793,2542,794)|not))|.data.ipad_more_sections|=map(select(.id|IN(1070,965)|not)|if .id==764 then .title="我的设置" else . end)|del(.data.ipad_upper_sections)
 
 map_locals:
 - match: ^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials
