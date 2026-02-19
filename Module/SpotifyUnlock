@@ -1,17 +1,6 @@
 name: Spotify音乐
 description: 屏蔽插播广告切换歌曲广告以及其他广告解锁订阅权限
 
-map_locals:
-- match: ^https:\/\/spclient\.wg\.spotify\.com\/(watch-feed-entrypoints|ads\/v3\/ads|pendragon|merch-npv-service)
-  status_code: 200
-  body: ''
-
-header_rewrites:
-- delete:
-    match: ^https:\/\/(spclient\.wg\.spotify\.com|.*-spclient\.spotify\.com(:443)?)\/user-customization-service\/v1\/customize$
-    name: if-none-match
-    type: request
-
 scriptings:
 - http_response:
     name: 解锁处理
