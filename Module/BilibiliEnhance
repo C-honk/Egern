@@ -3,31 +3,46 @@ description: 精简客户端UI优化首页屏蔽推荐广告评论贴片广告�
 
 body_rewrites:
 - response_jq:
-    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/splash\/(list|show|event\/list2)\?
-    filter: .data|= with_entries(if .key | IN("show", "event_list") then .value = [] else . end)
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/splash
+    filter: .data.list=[]|.data.show=[]|.data.min_interval=2400000000
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/search
-    filter: .data|= map(select(.type!="recommend")|del(.search_ranking_meta))
-- response_jq:
-    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\?
-    filter: .data.items|= map(select(.rcmd_reason=="竖屏" or .card_goto=="av" ))
+    filter: .data|=map(select(.type!="recommend")|del(.search_ranking_meta))
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story
-    filter: .data.items|= map(select(.goto=="vertical_av"))
+    filter: .data.items|=map(select(.is_ad!=true and (has("ad_info")|not) and .goto!="ad_av" and .goto!="vertical_ad"))
+- response_jq:
+    match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index/?
+    filter: .data.items|=map(select(.ad_info.is_ad_loc!=true and (.card_type|test("banner_")|not)))
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/tab\/v2
-    filter: .data.tab|= [(.[]|select(.id==40)),(.[]|select(.id==41)),(.[]|select(.id==3502)),(.[]|select(.id==3503)),(.[]|select(.id==39))]|.data.bottom|=map(select(.id|IN(177,179,181)))|.data.top|=map(select(.id==3510))|.data.top_more=[]|.data.top_left=[]
+    filter: .data.tab|=[(.[]|select(.id==40)),(.[]|select(.id==41)),(.[]|select(.id==3502)),(.[]|select(.id==3503)),(.[]|select(.id==39))]|.data.bottom|=map(select(.id|IN(177,179,181)))|.data.top|=map(select(.id==3510))|.data.top_more=[]|.data.top_left=[]
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\?
-    filter: .data.sections_v2|= map(if .style==1 and .items[0].id>=396 and .items[0].id<=399 then . elif .style==2 then .items |= map(select(.id==407 or .id==410)|if .id==410 then .title="我的设置" else . end)|del(.title) else empty end) | .data.modular_vip_section={}
+    filter: .data.modular_vip_section=null|.data.sections_v2|=[.[]|select(.type!=1 and .type!=4)|(if .title=="更多服务" then .title="" else . end)|.items|=[.[]|select(.id|IN(812,964)|not)|if .id==410 then.+{title:"我的设置"}else . end]|select(.items|length>0)]
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\/ipad
-    filter: .data.ipad_recommend_sections|= map(select(.id|IN(758,759,760,792,793,2542,794)|not))|.data.ipad_more_sections|=map(select(.id|IN(1070,965)|not)|if .id==764 then .title="我的设置" else . end)|del(.data.ipad_upper_sections)
+    filter: del(.data.ipad_upper_sections)|.data.ipad_recommend_sections|=map(select(.id|IN(2541,758,759)|not))|.data.ipad_more_sections|=map(select(.id!=965)|if .id==764 then .title="我的设置" else . end)
+- response_jq:
+    match: ^https:\/\/api\.bilibili\.com\/pgc\/page\/cinema\/tab
+    filter: del(.result.modules[]|select(.module_id==1633))
+- response_jq:
+    match: ^https:\/\/api\.bilibili\.com\/pgc\/page\/bangumi
+    filter: del(.result.modules[]|select(.module_id==1639))
 
 map_locals:
 - match: ^https:\/\/api\.bilibili\.com\/x\/vip\/ads\/materials
   status_code: 200
-  body: ''
+  body: ' '
+- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Teenagers\/ModeStatus$
+  body: AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA
+  binary: true
+- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.interface\.v1\.Search\/DefaultWords$
+  body: AAAAACkaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7IgAoAToAQgBKAA==
+  binary: true
+- match: ^https:\/\/grpc\.biliapi\.net\/bilibili\.app\.(view\.v1\.View\/TFInfo|viewunite\.v1\.View\/ViewEndPage)$
+  body: AAAAAAA=
+  binary: true
 
 scriptings:
 - http_response:
@@ -36,10 +51,9 @@ scriptings:
     script_url: https://raw.githubusercontent.com/kokoryh/Sparkle/master/dist/bilibili.protobuf.response.js
     body_required: true
     binary_body: true
-
 mitm:
   hostnames:
     includes:
+    - grpc.biliapi.net
     - app.bilibili.com
     - api.bilibili.com
-    - grpc.biliapi.net
