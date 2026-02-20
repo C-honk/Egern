@@ -4,25 +4,25 @@ description: 精简客户端UI优化首页屏蔽推荐广告评论贴片广告�
 body_rewrites:
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/splash
-    filter: .data.list=[]|.data.show=[]|.data.min_interval=2400000000
+    filter: .data|=(.list=[]|.show=[]|.min_interval=2400000000)
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/search
-    filter: .data|=map(select(.type!="recommend")|del(.search_ranking_meta))
+    filter: .data|=map(select(.type!="recommend"))|.data[].search_ranking_meta?=empty
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index\/story
-    filter: .data.items|=map(select(.is_ad!=true and (has("ad_info")|not) and .goto!="ad_av" and .goto!="vertical_ad"))
+    filter: .data.items|=map(select(.is_ad!=true and .goto|IN("ad_av","vertical_ad")|not and has("ad_info")|not))
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/feed\/index/?
-    filter: .data.items|=map(select(.ad_info.is_ad_loc!=true and (.card_type|test("banner_")|not)))
+    filter: .data.items|=map(select(.ad_info.is_ad_loc!=true and (.card_type|startswith("banner_")|not)))
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/resource\/show\/tab\/v2
-    filter: .data.tab|=[(.[]|select(.id==40)),(.[]|select(.id==41)),(.[]|select(.id==3502)),(.[]|select(.id==3503)),(.[]|select(.id==39))]|.data.bottom|=map(select(.id|IN(177,179,181)))|.data.top|=map(select(.id==3510))|.data.top_more=[]|.data.top_left=[]
+    filter: .data.tab|=map(select(.id|IN(40,41,39,3502,3503)))|.data.bottom|=map(select(.id|IN(177,179,181)))|.data.top|=map(select(.id==3510))|.data.top_more=[]|.data.top_left=[]
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\?
-    filter: .data.modular_vip_section=null|.data.sections_v2|=[.[]|select(.type!=1 and .type!=4)|(if .title=="更多服务" then .title="" else . end)|.items|=[.[]|select(.id|IN(812,964)|not)|if .id==410 then.+{title:"我的设置"}else . end]|select(.items|length>0)]
+    filter: .data.modular_vip_section=null|.data.sections_v2|=map(select(.type|IN(1,4)|not)|if .title=="更多服务" then .title="" else . end|.items|=map(select(.id|IN(812,964)|not)|if .id==410 then .title="我的设置" else . end))|map(select(.items|length>0))
 - response_jq:
     match: ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/mine\/ipad
-    filter: del(.data.ipad_upper_sections)|.data.ipad_recommend_sections|=map(select(.id|IN(2541,758,759)|not))|.data.ipad_more_sections|=map(select(.id!=965)|if .id==764 then .title="我的设置" else . end)
+    filter: del(.data.ipad_upper_sections)|.data.ipad_recommend_sections|=map(select(.id|IN(2541,758,759)|not))|.data.ipad_more_sections|=map((if .id==764 then .title="我的设置" else . end)|select(.id!=965))
 - response_jq:
     match: ^https:\/\/api\.bilibili\.com\/pgc\/page\/cinema\/tab
     filter: del(.result.modules[]|select(.module_id==1633))
