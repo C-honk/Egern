@@ -1,5 +1,5 @@
 name: YouTube+Music
-description: 精简客户端首页UI屏蔽推荐广告贴片广告以及音乐客户端
+description: 屏蔽广告精简界面以及音乐客户端
 
 compat_arguments:
   上传按钮: 'true'
