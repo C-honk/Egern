@@ -1,5 +1,5 @@
 name: BiliBili视频
-description: 精简客户端UI优化首页屏蔽推荐广告评论贴片广告优化我的页面
+description: 精简客户端界面 屏蔽推荐评论贴片广告
 
 body_rewrites:
 - response_jq:
