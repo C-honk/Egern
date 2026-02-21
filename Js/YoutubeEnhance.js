@@ -6535,8 +6535,8 @@
       let e = {
         lyricLang: "off",
         captionLang: "off",
-        blockUpload: !0,
-        blockImmersive: !0,
+        blockUpload: !1,
+        blockImmersive: !1,
         blockShorts: !1,
         debug: !1,
       };
