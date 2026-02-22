@@ -1,0 +1,40 @@
+name: 酷狗音乐概念版
+description: 屏蔽广告隐藏部分没有用功能
+
+header_rewrites:
+- delete:
+    match: ^https:\/\/gateway\.kugou\.com\/ads.service/v2/lite_v_splash
+    name: client-tmeab-testad
+    type: response
+body_rewrites:
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/ads.service/v2/lite_v_splash
+    filter: .data={}
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/ads\.gateway\/v2\/lite_v_popup
+    filter: .data.ads={}
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/youth\/v1\/channel\/tab_list
+    filter: .data.list|=[.[]|select(.tab_id!=3 and .tab_id!=-1)]
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/youth\/v1\/ab\/tmeab\?.*ab_source=.*TMEAB0tgviptype0type
+    filter: .data.TMEAB0tgviptype0type.mapParams|=(.Insert_ads_mode="0"|.Insert_ads_timing="-1"|.Insert_ads_drag="0"|.Insert_ads_point="-1"|.songs_pop_ups_max="0"|.singlesong_pop_ups_max="0"|.hide_tvbar="1"|.vip_free_timeperiod="999999"|.vip_free_mode="1"|.vip_free_times="999999")
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/youth\/v1\/ab\/tmeab\?.*ab_source=.*ysenter
+    filter: .data.TMEAB0ad0type.mapParams|=(.notice="0"|.post="0"|.syban_show="0"|.full_play="0"|.syban="0"|.round_play="0"|.comment="0"|.diy_play="0")|.data.viphide.mapParams|=(.video_play_hide="1"|.song_mode_unvipsong="1"|.video_mode_hide="1"|.song_mode_hide="1")|.data.TMEAB0vipplay0type.mapParams.ad_seconds="0"|.data.TMEAB0FreemiumExposureFix0type.mapParams|=(.popup_display="0"|.hot_start="0")|.data.TMEAB0FreemiumExposureFix0typeV2.mapParams|=(.popup_display="0"|.hot_start="0")
+- response_jq:
+    match: ^https:\/\/gateway\.kugou\.com\/youth\/v1\/ab\/tmeab\?.*ab_source=.*TMEAB0WelcomePage0type
+    filter: .data|=(.newsongradio.mapParams.is_show="0"|.aiwritesong.mapParams.aiwritesong="0"|.TMEAB0EarningTab0type.mapParams|=(.Animation="0"|.Earning_Tab="0")|.TMEAB0freesignin0type.mapParams|=(.enter="0"|.free_type="0")|.TMEAB0signin0type.mapParams.enter="0"|.TMEAB0TaskCenterEnter0type.mapParams|=(.style="0"|.mypage="0"|.TaskDone="0"|.TFC="0"))
+
+map_locals:
+- match: ^https:\/\/gateway\.kugou\.com\/youth\/v2\/activity\/task_list
+  status_code: 200
+  body: ' '
+- match: ^https:\/\/gateway\.kugou\.com\/goddess\/v1\/content\/biz_list
+  status_code: 200
+  body: ' '
+
+mitm:
+  hostnames:
+    includes:
+    - gateway.kugou.com
