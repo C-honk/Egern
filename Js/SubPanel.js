@@ -1,7 +1,7 @@
 const args = argument();
 const urls = args.url ? args.url.split("@").map(u => u.trim()).filter(u => u) : [];
 const titles = args.title ? args.title.split("@").map(t => t.trim()) : [];
-const timeout = args.timeout ? parseInt(args.timeout) : 3000;
+const timeout = args.timeout ? parseInt(args.timeout) : 2000;
 
 function argument() {
   const result = {};
