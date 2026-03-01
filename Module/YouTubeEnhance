@@ -1,10 +1,9 @@
-name: YouTube+Music
-description: 屏蔽广告精简界面以及音乐客户端
+name: YouTube视频
+description: 更新于2026年3月1日
 
 compat_arguments:
   上传按钮: 'true'
   短片按钮: 'true'
-  选段按钮: 'true'
 
 map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
@@ -18,7 +17,7 @@ scriptings:
     match: ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/YoutubeEnhance.js
     arguments:
-      _compat.$argument: '{"blockUpload":{{{上传按钮}}},"blockImmersive":{{{选段按钮}}},"blockShorts":{{{短片按钮}}}}'
+      _compat.$argument: '{"blockUpload":{{{上传按钮}}},"blockShorts":{{{短片按钮}}}}'
     body_required: true
     binary_body: true
 
