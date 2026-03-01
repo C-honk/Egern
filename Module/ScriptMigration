@@ -1,5 +1,5 @@
-name: 脚本转换
-description: 让脚本和规则转换成Egern使用
+name: 模块转换
+description: 更新于2026年3月1日
 
 scriptings:
   - http_request:
