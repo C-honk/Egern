@@ -1,9 +1,8 @@
 name: 节点信息
-description: 更新于2026年3月1日
+description: 更新于2026年3月3日
 
 compat_arguments_desc: |
   提供查看代理节点IP落地信息使用参数 ON/OFF 隐藏IP
-
 compat_arguments:
   IP隐藏:
 
