@@ -3,8 +3,7 @@ description: 更新于2026年3月1日
 
 compat_arguments_desc: |
   提供查看机场订阅流量使用参数 @ 添加不同机场订阅
-  订阅并发请求耗时 毫秒
-
+  订阅并发请求超时毫秒
 compat_arguments:
   地址:
   备注:
