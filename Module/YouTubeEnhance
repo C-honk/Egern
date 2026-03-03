@@ -1,14 +1,16 @@
 name: YouTube视频
-description: 更新于2026年3月1日
+description: 更新于2026年3月3日
 
+compat_arguments_desc: |
+  默认关闭快捷入口
 compat_arguments:
-  上传按钮: 'true'
-  短片按钮: 'true'
+  关闭上传按钮: 'true'
+  关闭短片按钮: 'true'
 
 map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
   status_code: 200
-  body: ''
+  body: ' '
   binary: true
 
 scriptings:
@@ -17,7 +19,7 @@ scriptings:
     match: ^https:\/\/youtubei\.googleapis\.com\/(youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch))(\?(.*))?$
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/YoutubeEnhance.js
     arguments:
-      _compat.$argument: '{"blockUpload":{{{上传按钮}}},"blockShorts":{{{短片按钮}}}}'
+      _compat.$argument: '{"blockUpload":{{{关闭上传按钮}}},"blockShorts":{{{关闭短片按钮}}}}'
     body_required: true
     binary_body: true
 
