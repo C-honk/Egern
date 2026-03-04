@@ -1,5 +1,5 @@
 name: YouTube视频
-description: 更新于2026年3月3日
+description: 更新于2026年3月4日
 
 compat_arguments_desc: |
   默认开启关闭快捷入口 使用 true/false 参数控制
@@ -11,7 +11,6 @@ map_locals:
 - match: ^https:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad
   status_code: 200
   body: ' '
-  binary: true
 
 scriptings:
 - http_response:
