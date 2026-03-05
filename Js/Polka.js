@@ -11,7 +11,7 @@ try{
                 delete d.allDayConfig.fmRewards;
             }
 
-            const expireTime=new Date('2099-09-09T09:09:00+08:00').getTime();
+            const expireTime=new Date('2100-01-01T09:09:00+08:00').getTime();
 
             let p=d.payInfo;
             if(p){
