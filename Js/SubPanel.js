@@ -57,7 +57,7 @@ function generateText(data, title) {
   if (!data) return "";
   const used = (data.upload || 0) + (data.download || 0);
   const total = data.total || 0;
-  const percent = total > 0 ? Math.floor((1 - used / total) * 100) : 0;
+  const percent = total > 0 ? Math.floor((used / total) * 100) : 0;
 
   const lines = [];
   if (title) lines.push(`机场：${title}`);
