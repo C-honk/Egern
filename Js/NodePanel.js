@@ -20,7 +20,7 @@ $httpClient.get(options, (err, resp, body) => {
   $done({
     title: "节点信息",
     content: `位置：${data.country} ${data.countryCode}\nIP址：${ip}\n运营：${data.isp}`,
-    icon: "globe.asia.australia.fill",
+    icon: "location.circle.fill",
     "icon-color": "#2FA3FF"
   });
 });
