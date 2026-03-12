@@ -1,27 +1,13 @@
 name: 波点音乐
-description: 更新于2026年3月1日
+description: 更新于2026年3月12日
 
 body_rewrites:
 - response_jq:
     match: ^https:\/\/bd-api\.kuwo\.cn\/api\/voice\/room\/v2\/sidebar
     filter: .data.sidebar|=map(select(.id|IN(1,17,18,21,26,28,31,32,33)|not)|.coverGif=""|if.id==4 then.name="开车好歌"elif.id==10 then.name="睡前轻松"elif.id==25 then.name="城市漫步"elif.id==27 then.name="次元精选"elif.id==30 then.name="通勤好听"elif.id==3 then.name="深夜放松"else. end)
-
-map_locals:
-- match: ^https:\/\/bd-api\.kuwo\.cn\/api\/advert\/earning\/app\/config
-  status_code: 200
-  body: ' '
-- match: ^https:\/\/bd-api\.kuwo\.cn\/api\/play\/advert\/info
-  status_code: 200
-  body: ' '
-- match: ^https:\/\/bd-api\.kuwo\.cn\/api\/search\/topic\/word\/list
-  status_code: 200
-  body: ' '
-- match: ^https:\/\/bd-api\.kuwo\.cn\/api\/service\/(banner\/positions|advert\/config|global\/config\/vipEnter|resource\/recommend)
-  status_code: 200
-  body: ' '
-- match: ^https:\/\/bd-api\.kuwo\.cn\/api\/pay\/vip\/(invitation\/assist\/popup|invitation\/swell|lowPriceText)
-  status_code: 200
-  body: ' '
+- response_jq:
+    match: ^https:\/\/bd-api\.kuwo\.cn\/api\/(play\/advert\/info|service\/advert\/config|service\/conf\/all|search\/topic\/word\/list|service\/global\/config\/vipEnter|service\/resource\/recommend|pay\/vip\/lowPriceText|service\/banner\/positions|pay\/vip\/invitation\/(swell|assist)\/popup|pay\/retention\/product)
+    filter: .data={}
 
 scriptings:
 - http_response:
@@ -32,7 +18,7 @@ scriptings:
     body_required: true
 - http_response:
     name: 配置处理
-    match: ^https:\/\/(bd-api\.kuwo\.cn\/api\/(ucenter\/users\/(pub|login)|advert\/free\/config|play\/sound\/effect\/list|service\/(global\/config\/scene|home\/index|conf\/all))|ab-bodian\.kuwo\.cn\/abtest\/ui\/info)
+    match: ^https:\/\/bd-api\.kuwo\.cn\/api\/(service\/home\/index|service\/global\/config\/scene|ucenter\/users\/(pub|login)|advert\/free\/config|play\/sound\/effect\/list)
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/Polka.js
     timeout: 10
     body_required: true
@@ -41,4 +27,3 @@ mitm:
   hostnames:
     includes:
     - bd-api.kuwo.cn
-    - ab-bodian.kuwo.cn
