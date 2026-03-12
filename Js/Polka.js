@@ -1,3 +1,5 @@
+//2026.3.12
+
 let url=$request.url;
 let body=$response.body;
 
@@ -53,38 +55,14 @@ try{
             }
         }
     }
-    else if(/api\/service\/conf\/all/.test(url)){
-        let g=obj.data&&obj.data.groupSign;
-        if(g){
-            g.adExitChange=0;
-            g.adGuideTest=0;
-            g.adStartAppDialog=0;
-            g.playTips=0;
-            g.freeDynamicChange=0;
-        }
-    }
-    else if(/api\/service\/global\/config\/scene/.test(url)){
-        let d=obj.data;
-        if(d){
-            d.showShopEntry=false;
-            d.idolTabShow=false;
-            d.playingPageCollectPagList=[];
-            d.adsNotFinishVipPop4DayInterval=9999;
-            d.AllDialogIntervals=9999;
-            if(d.warmStartDialog) d.warmStartDialog.count=0;
-            d.offlineFavTipsGuide=0;
-            if(d.downLoadZoneConfig) d.downLoadZoneConfig.freeTimeRemindTip=0;
-            if(d.iapNewConfig) d.iapNewConfig.enable=0;
-            if(d.iapConfig) d.iapConfig.enable=0;
-            d.iosAudioSessionManager_ErrAlert=false;
-        }
-    }
+
     else if(/api\/service\/home\/index/.test(url)){
         let list=obj.data&&obj.data.moduleList;
         if(Array.isArray(list)){
             obj.data.moduleList=list.filter(m=>![6,2,1,8,9].includes(m.type));
         }
     }
+
     else if(/api\/play\/sound\/effect\/list/.test(url)){
         let list=obj.data&&obj.data.list;
         if(Array.isArray(list)){
@@ -94,32 +72,24 @@ try{
             });
         }
     }
-    else if(/abtest\/ui\/info/.test(url)){
-        let map=obj.data&&obj.data.mapTestInfo;
-        if(map){
-            let modules=[
-                map.DownloadAd&&map.DownloadAd.mapParams,
-                map.DownloadAdios&&map.DownloadAdios.mapParams,
-                map.WZDownloadAd&&map.WZDownloadAd.mapParams,
-                map.DownloadZoneOptimizationAZ&&map.DownloadZoneOptimizationAZ.mapParams,
-                map.adExpiresFreemodeShowad&&map.adExpiresFreemodeShowad.mapParams,
-                map.BDLaunchApp&&map.BDLaunchApp.mapParams,
-                map.insert&&map.insert.mapParams,
-                map.CommentADPosition&&map.CommentADPosition.mapParams,
-                map.DiscoverADPosition&&map.DiscoverADPosition.mapParams,
-                map.ClickView&&map.ClickView.mapParams,
-                map.hongbao&&map.hongbao.mapParams,
-                map.Dynamiccoins&&map.Dynamiccoins.mapParams,
-                map.Wanliu&&map.Wanliu.mapParams,
-                map.bodianmvdialog&&map.bodianmvdialog.mapParams,
-                map.FreeModVoiceReminder&&map.FreeModVoiceReminder.mapParams,
-                map.MvTryShowAds&&map.MvTryShowAds.mapParams
-            ];
-            modules.forEach(mod=>{
-                if(mod){
-                    for(let k in mod) mod[k]="0";
-                }
-            });
+
+    else if(/api\/service\/global\/config\/scene/.test(url)){
+        let d=obj.data;
+        if(d){
+            d.showShopEntry=false;
+            d.idolTabShow=false;
+            d.thirdSchemeWhiteList=[];
+            d.playingPageCollectPagList=[];
+            d.iapNewConfig={};
+            d.iapConfig={};
+            d.downLoadZoneConfig={};
+            d.warmStartDialog={};
+            d.playingPageOutCommentConfig={};
+            d.adsNotFinishVipPop4DayInterval=0;
+            d.AllDialogIntervals=0;
+            d.audioUrlCacheTimeInterval=0;
+            d.playFeedDayCount=0;
+            d.iosDownloadFileReceiveCount=0;
         }
     }
 
