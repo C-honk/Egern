@@ -72,7 +72,6 @@ function generateText(data, title) {
 (async () => {
   let texts = [];
   let hasError = false;
-  const icon = "antenna.radiowaves.left.and.right.circle.fill";
 
   if (!urls.length) {
     texts.push("未填写订阅");
@@ -108,7 +107,5 @@ function generateText(data, title) {
   $done({
     title: "订阅信息",
     content: texts.join("\n\n"),
-    icon: icon,
-    "icon-color": hasError ? "#FF3B30" : "#28E297",
   });
 })();
