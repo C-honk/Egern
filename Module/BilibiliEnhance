@@ -1,5 +1,5 @@
 name: 哔哩哔哩
-description: 更新于2026年3月3日
+description: 更新于2026年3月14日
 
 body_rewrites:
 - response_jq:
@@ -36,10 +36,14 @@ body_rewrites:
 map_locals:
 - match: ^https:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_shopping_info\?
   status_code: 200
-  body: ' '
+  headers:
+    Content-Type: application/json
+  body: '{}'
 - match: ^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\?
   status_code: 200
-  body: ' '
+  headers:
+    Content-Type: application/json
+  body: '{}'
 - match: ^https:\/\/ap[ip]\.bilibili\.com\/x\/(resource\/(top\/activity|patch\/tab(\/v2)?)|vip\/ads\/materials)\?
   status_code: 200
   headers:
