@@ -1,5 +1,5 @@
-name: 模块转换
-description: 更新于2026年3月1日
+name: 订阅与模块工具
+description: 更新于2026年3月20日
 
 scriptings:
   - http_request:
@@ -19,7 +19,19 @@ scriptings:
       match: ^https:\/\/script\.hub\/convert\/
       script_url: https://raw.githubusercontent.com/Script-Hub-Org/Script-Hub/main/script-converter.js
 
+  - http_request:
+      name: 订阅后端
+      match: ^https?:\/\/sub\.store\/((download)|api\/(preview|sync|(utils\/node-info)))
+      script_url: https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js
+      body_required: true
+  - http_request:
+      name: 订阅前端
+      match: ^https?:\/\/sub\.store
+      script_url: https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js
+      body_required: true
+
 mitm:
   hostnames:
     includes:
     - script.hub
+    - sub.store
