@@ -40,7 +40,7 @@ export default async function (ctx) {
         children: [
           {
             type: 'image',
-            src: 'sf-symbol:network',
+            src: 'sf-symbol:server.rack',
             width: 14,
             height: 14
           },
@@ -67,7 +67,7 @@ export default async function (ctx) {
         borderRadius: 0.5
       },
 
-      buildRow('server.rack', 'IP址', ipData.ip, colorMap.ip),
+      buildRow('network', 'IP址', ipData.ip, colorMap.ip),
       buildRow('location.circle', '位置', ipData.country, colorMap.location),
       buildRow('antenna.radiowaves.left.and.right.circle', '运营', ipData.connection.isp, colorMap.isp),
       buildRow('internaldrive.fill', '类型', typeText, typeColor)
