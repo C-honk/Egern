@@ -1,5 +1,5 @@
 name: 波点音乐
-description: 更新于2026年3月22日
+description: 更新于2026年3月19日
 
 body_rewrites:
 - response_jq:
