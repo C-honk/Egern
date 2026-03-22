@@ -29,8 +29,8 @@ export default async function (ctx) {
     type: 'widget',
     refreshAfterDate: new Date(Date.now() + 60 * 1000),
     backgroundColor: { light: '#EDEDED', dark: '#232323' },
-    padding: 18,
-    gap: 12,
+    padding: 17,
+    gap: 10,
     children: [
       {
         type: 'stack',
