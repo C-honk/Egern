@@ -1,111 +1,167 @@
-const args = argument();
-const urls = args.url ? args.url.split("@").map(u => u.trim()).filter(u => u) : [];
-const titles = args.title ? args.title.split("@").map(t => t.trim()) : [];
-const timeout = args.timeout ? parseInt(args.timeout) : 2000;
+export default async function (ctx) {
+  let info = null;
+  let errorMessage = null;
 
-function argument() {
-  const result = {};
-  if ($argument) {
-    $argument.split("&").forEach(p => {
-      const index = p.indexOf("=");
-      const key = p.substring(0, index);
-      const value = p.substring(index + 1);
-      result[key] = decodeURIComponent(value);
+  try {
+    const res = await ctx.http.get(ctx.env.URL, {
+      headers: { 'User-Agent': 'clash.meta' }
     });
-  }
-  return result;
-}
 
-function fetchUsage(url) {
-  return new Promise(resolve => {
-    $httpClient.get(
-      { url, headers: { "User-Agent": "clash.meta/v1.19.16" }, timeout },
-      (err, resp) => {
-        if (err) {
-          resolve({ status: 0, error: err });
-        } else {
-          resolve(resp);
-        }
-      }
-    );
-  });
-}
+    if (res.status === 200) {
+      const header = res.headers.get('subscription-userinfo');
 
-function parseUsage(headers) {
-  const headerKey = Object.keys(headers).find(k => k.toLowerCase() === "subscription-userinfo");
-  if (!headerKey || !headers[headerKey]) return null;
-  const data = {};
-  headers[headerKey].split(";").forEach(p => {
-    const [k, v] = p.trim().split("=");
-    if (k && v) data[k] = parseInt(v);
-  });
-  return data;
-}
+      if (header) {
+        const data = Object.fromEntries(
+          header.split(';').map(i => i.trim().split('='))
+        );
 
-function formatBytes(bytes, fixed = 2) {
-  const units = ["B", "KB", "MB", "GB", "TB"];
-  let i = 0;
-  let num = bytes;
-  while (num >= 1024 && i < units.length - 1) {
-    num /= 1024;
-    i++;
-  }
-  return fixed === 0 ? Math.floor(num) + units[i] : num.toFixed(fixed) + units[i];
-}
+        const upload = parseInt(data.upload || 0);
+        const download = parseInt(data.download || 0);
+        const total = parseInt(data.total || 0);
+        const expireTime = parseInt(data.expire);
 
-function generateText(data, title) {
-  if (!data) return "";
-  const used = (data.upload || 0) + (data.download || 0);
-  const total = data.total || 0;
-  const percent = total > 0 ? Math.floor((used / total) * 100) : 0;
+        const used = upload + download;
+        const remain = total - used;
 
-  const lines = [];
-  if (title) lines.push(`机场：${title}`);
-  lines.push(`流量：${percent}% ⮂ ${formatBytes(used)} ⭠ ${formatBytes(total,0)}`);
-  if (data.expire) {
-    const d = new Date(data.expire * 1000);
-    lines.push(`到期：${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`);
-  }
-  return lines.join("\n");
-}
+        const format = (v) => {
+          if (!v) return '0 B';
+          const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+          let i = 0;
+          while (v >= 1024 && i < units.length - 1) {
+            v /= 1024;
+            i++;
+          }
+          return (v % 1 === 0 ? v : v.toFixed(2)) + ' ' + units[i];
+        };
 
-(async () => {
-  let texts = [];
-  let hasError = false;
-
-  if (!urls.length) {
-    texts.push("未填写订阅");
-    hasError = true;
-  } else {
-    const results = await Promise.all(urls.map(u => fetchUsage(u)));
-    for (let i = 0; i < results.length; i++) {
-      const r = results[i];
-      const title = titles[i];
-
-      if (!r || r.status !== 200) {
-        if (r && r.error && r.error.includes("timeout")) {
-          texts.push(`${title || `订阅${i + 1}`} 请求超时${timeout}ms`);
-        } else if (r && r.status) {
-          texts.push(`${title || `订阅${i + 1}`} HTTP错误${r.status}`);
-        } else {
-          texts.push(`${title || `订阅${i + 1}`} 请求失败`);
-        }
-        hasError = true;
-        continue;
-      }
-
-      const data = parseUsage(r.headers || {});
-      if (data) {
-        texts.push(generateText(data, title));
+        info = {
+          total: format(total),
+          used: format(used),
+          remain: format(remain),
+          expire: expireTime && expireTime > 0
+            ? (() => {
+                const d = new Date(expireTime * 1000);
+                return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+              })()
+            : '订阅永久'
+        };
       } else {
-        texts.push(`${title || `订阅${i + 1}`} 非机场订阅或无流量信息`);
-        hasError = true;
+        errorMessage = '无流量信息';
       }
+    } else {
+      errorMessage = `HTTP ${res.status}`;
     }
+  } catch (e) {
+    errorMessage = e.message || '请求失败';
   }
 
-  $done({
-    title: "订阅信息",
-    content: texts.join("\n\n"),
-  });
-})();
+  const colorMap = {
+    total: '#007AFF',
+    used: '#FF9500',
+    remain: '#34C759',
+    expire: '#DE5858'
+  };
+
+  const errorColor = '#FF3B30';
+
+  return {
+    type: 'widget',
+    refreshAfterDate: new Date(Date.now() + 300 * 1000),
+    backgroundColor: { light: '#EDEDED', dark: '#232323' },
+    padding: 18,
+    gap: 12,
+    children: [
+      {
+        type: 'stack',
+        direction: 'row',
+        alignItems: 'center',
+        gap: 6,
+        children: [
+          {
+            type: 'image',
+            src: 'sf-symbol:antenna.radiowaves.left.and.right',
+            width: 14,
+            height: 14
+          },
+          {
+            type: 'text',
+            text: errorMessage ? '订阅异常' : ctx.env['备注'] || '订阅流量',
+            font: { size: 14, weight: 'regular' },
+            textColor: errorMessage
+              ? errorColor
+              : { light: '#1C1C1E', dark: '#FFFFFF' }
+          },
+          { type: 'spacer' },
+          {
+            type: 'text',
+            text: new Date().toTimeString().slice(0, 5),
+            font: { size: 13, weight: 'regular' },
+            textColor: { light: '#545454', dark: '#D0D0D0' },
+            lineLimit: 1
+          }
+        ]
+      },
+      {
+        type: 'stack',
+        height: 1,
+        backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' },
+        borderRadius: 0.5
+      },
+      ...(errorMessage
+        ? [
+            {
+              type: 'stack',
+              direction: 'row',
+              alignItems: 'center',
+              gap: 8,
+              children: [
+                {
+                  type: 'text',
+                  text: errorMessage,
+                  font: { size: 14, weight: 'regular' },
+                  textColor: errorColor,
+                  lineLimit: 2
+                }
+              ]
+            }
+          ]
+        : [
+            row('icloud.circle', '总量', info.total, colorMap.total),
+            row('chart.line.uptrend.xyaxis.circle', '已用', info.used, colorMap.used),
+            row('chart.pie', '剩余', info.remain, colorMap.remain),
+            row('calendar.circle', '到期', info.expire, colorMap.expire)
+          ])
+    ]
+  };
+}
+
+function row(icon, label, value, color) {
+  return {
+    type: 'stack',
+    direction: 'row',
+    alignItems: 'center',
+    gap: 8,
+    children: [
+      {
+        type: 'image',
+        src: `sf-symbol:${icon}`,
+        width: 14,
+        height: 14,
+        color: color
+      },
+      {
+        type: 'text',
+        text: `${label}：`,
+        font: { size: 14, weight: 'regular' },
+        textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
+      },
+      {
+        type: 'text',
+        text: value,
+        font: { size: 14, weight: 'regular' },
+        textColor: { light: '#1C1C1E', dark: '#E5E5E7' },
+        lineLimit: 1
+      }
+    ]
+  };
+}
