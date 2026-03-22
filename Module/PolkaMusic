@@ -1,5 +1,5 @@
 name: 波点音乐
-description: 更新于2026年3月15日
+description: 更新于2026年3月22日
 
 body_rewrites:
 - response_jq:
@@ -37,6 +37,11 @@ map_locals:
   headers:
     Content-Type: application/json
   body: '{}'
+- match: ^https:\/\/mc\.tencentmusic\.com\/sdk
+  status_code: 200
+  headers:
+    Content-Type: application/json
+  body: '{}'
 
 scriptings:
 - http_response:
@@ -57,3 +62,4 @@ mitm:
     includes:
     - bd-api.kuwo.cn
     - ab-bodian.kuwo.cn
+    - mc.tencentmusic.com
