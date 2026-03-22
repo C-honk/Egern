@@ -1,5 +1,5 @@
 name: 节点信息
-description: 更新于2026年3月18日
+description: 更新于2026年3月22日
 
 scriptings:
 - generic:
@@ -9,5 +9,3 @@ scriptings:
 widgets:
 - name: IP信息
   script_name: IP信息
-  env:
-    IP掩码: ''
