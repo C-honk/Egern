@@ -15,7 +15,7 @@ export default async function (ctx) {
   const riskData = await (await ctx.http.get('http://my.ippure.com/v1/info')).json();
 
   const isResidential = riskData.isResidential;
-  const typeText = isResidential ? '住宅IP' : '广播IP';
+  const typeText = isResidential ? '住宅IP' : '机房IP';
 
   const typeColor = isResidential ? '#007AFF' : '#FF7272';
 
