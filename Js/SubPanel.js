@@ -79,7 +79,7 @@ export default async function (ctx) {
         children: [
           {
             type: 'image',
-            src: 'sf-symbol:antenna.radiowaves.left.and.right',
+            src: 'sf-symbol:antenna.radiowaves.left.and.right.circle.fill',
             width: 14,
             height: 14
           },
