@@ -16,7 +16,6 @@ export default async function (ctx) {
 
   const isResidential = riskData.isResidential;
   const typeText = isResidential ? '住宅IP' : '机房IP';
-
   const typeColor = isResidential ? '#007AFF' : '#FF7272';
 
   const colorMap = {
@@ -25,10 +24,24 @@ export default async function (ctx) {
     isp: '#998EE3'
   };
 
+  const isDark =
+    ctx.widgetFamily !== undefined ? ctx.colorScheme === 'dark' : false;
+
+  const gradient = {
+    type: 'linear',
+    colors: [
+      { light: '#EEEEEE', dark: '#252525' },
+      { light: '#C5DAF3', dark: '#2F3A46' }
+    ],
+    stops: [0, 1.0],
+    startPoint: { x: 0, y: 0 },
+    endPoint: { x: 1, y: 1 }
+  };
+
   return {
     type: 'widget',
     refreshAfterDate: new Date(Date.now() + 60 * 1000),
-    backgroundColor: { light: '#EDEDED', dark: '#232323' },
+    backgroundGradient: gradient,
     padding: 17,
     gap: 10,
     children: [
@@ -40,7 +53,7 @@ export default async function (ctx) {
         children: [
           {
             type: 'image',
-            src: 'sf-symbol:server.rack',
+            src: 'sf-symbol:globe.asia.australia.fill',
             width: 14,
             height: 14
           },
@@ -53,9 +66,9 @@ export default async function (ctx) {
           { type: 'spacer' },
           {
             type: 'text',
-            text: new Date().toTimeString().slice(0,5),
+            text: new Date().toTimeString().slice(0, 5),
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#545454', dark: '#D0D0D0' },
+            textColor: { light: '#414141', dark: '#DEDEDE' },
             lineLimit: 1
           }
         ]
@@ -67,9 +80,14 @@ export default async function (ctx) {
         borderRadius: 0.5
       },
 
-      buildRow('network', 'IP址', ipData.ip, colorMap.ip),
-      buildRow('location.circle', '位置', ipData.country, colorMap.location),
-      buildRow('antenna.radiowaves.left.and.right.circle', '运营', ipData.connection.isp, colorMap.isp),
+      buildRow('map.circle.fill', 'IP址', ipData.ip, colorMap.ip),
+      buildRow('location.circle.fill', '位置', ipData.country, colorMap.location),
+      buildRow(
+        'antenna.radiowaves.left.and.right.circle.fill',
+        '运营',
+        ipData.connection.isp,
+        colorMap.isp
+      ),
       buildRow('internaldrive.fill', '类型', typeText, typeColor)
     ]
   };
