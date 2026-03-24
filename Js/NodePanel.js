@@ -21,7 +21,7 @@ export default async function (ctx) {
     refreshAfterDate: new Date(Date.now() + 60 * 1000),
     backgroundColor: {
       light: '#FFFFFF',
-      dark: '#222222'
+      dark: '#1E1E1E'
     },
     padding: 17,
     gap: 10,
