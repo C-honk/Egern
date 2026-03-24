@@ -1,4 +1,4 @@
-//2026.03.25.04.29
+//2026.03.25 04:29
 
 export default async function (ctx) {
   const ipData = await (await ctx.http.get('https://ipwho.is/?lang=zh-CN')).json();
