@@ -56,9 +56,9 @@ export default async function (ctx) {
   }
 
   const colorMap = {
-    total: '#34C759',
+    total: '#4891E9',
     used: '#FF9500',
-    remain: '#3599ED',
+    remain: '#09D180',
     expire: '#DE5858'
   };
 
