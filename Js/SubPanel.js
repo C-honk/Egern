@@ -67,7 +67,16 @@ export default async function (ctx) {
   return {
     type: 'widget',
     refreshAfterDate: new Date(Date.now() + 300 * 1000),
-    backgroundColor: { light: '#EDEDED', dark: '#232323' },
+    backgroundGradient: {
+      type: 'linear',
+      colors: [
+        { light: '#EEEEEE', dark: '#252525' },
+        { light: '#C5DAF3', dark: '#2F3A46' }
+      ],
+      stops: [0, 1.0],
+      startPoint: { x: 0, y: 0 },
+      endPoint: { x: 1, y: 1 }
+    },
     padding: 17,
     gap: 10,
     children: [
@@ -126,10 +135,10 @@ export default async function (ctx) {
             }
           ]
         : [
-            row('icloud.circle', '总量', info.total, colorMap.total),
-            row('chart.line.uptrend.xyaxis.circle', '已用', info.used, colorMap.used),
-            row('chart.pie', '剩余', info.remain, colorMap.remain),
-            row('calendar.circle', '到期', info.expire, colorMap.expire)
+            row('icloud.circle.fill', '总量', info.total, colorMap.total),
+            row('chart.line.uptrend.xyaxis.circle.fill', '已用', info.used, colorMap.used),
+            row('chart.pie.fill', '剩余', info.remain, colorMap.remain),
+            row('calendar.circle.fill', '到期', info.expire, colorMap.expire)
           ])
     ]
   };
