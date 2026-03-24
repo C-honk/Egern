@@ -19,8 +19,8 @@ export default async function (ctx) {
   const typeColor = isResidential ? '#007AFF' : '#FF7272';
 
   const colorMap = {
-    ip: '#007AFF',
-    location: '#34C759',
+    ip: '#09D180',
+    location: '#4891E9',
     isp: '#998EE3'
   };
 
