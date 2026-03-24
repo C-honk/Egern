@@ -1,3 +1,5 @@
+//2026.03.25.04.29
+
 export default async function (ctx) {
   const ipData = await (await ctx.http.get('https://ipwho.is/?lang=zh-CN')).json();
 
@@ -34,7 +36,7 @@ export default async function (ctx) {
         children: [
           {
             type: 'image',
-            src: 'sf-symbol:map.circle.fill',
+            src: 'sf-symbol:globe',
             width: 14,
             height: 14
           },
