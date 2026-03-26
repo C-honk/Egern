@@ -1,4 +1,4 @@
-//2026.3.14
+// 2026.3.26
 
 let url = $request.url;
 let body = $response.body;
@@ -79,6 +79,21 @@ if (body) {
                     obj.data.list[i].vipType = 'free';
                     obj.data.list[i].audition = 0;
                 }
+            }
+        } else if (/api\/voice\/room\/v2\/sidebar/.test(url)) {
+            if (obj.data && obj.data.sidebar) {
+                obj.data.sidebar = obj.data.sidebar
+                    .filter(item => ![1,17,18,21,26,28,31,32,33].includes(item.id))
+                    .map(item => {
+                        item.coverGif = "";
+                        if (item.id === 4) item.name = "开车好歌";
+                        else if (item.id === 10) item.name = "睡前轻松";
+                        else if (item.id === 25) item.name = "城市漫步";
+                        else if (item.id === 27) item.name = "次元精选";
+                        else if (item.id === 30) item.name = "通勤好听";
+                        else if (item.id === 3) item.name = "深夜放松";
+                        return item;
+                    });
             }
         }
 
