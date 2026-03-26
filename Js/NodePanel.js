@@ -1,4 +1,4 @@
-//2026.03.26 09:28
+// 2026.03.27 03:30
 
 export default async function (ctx) {
   let ipData, riskData;
@@ -82,10 +82,10 @@ export default async function (ctx) {
         height: 1,
         backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' }
       },
-      buildRow('globe.asia.australia.fill','IP址', ipData.ip, '#09D180'),
-      buildRow('location.circle.fill','位置', ipData.country, '#4891E9'),
+      buildRow('globe.asia.australia.fill','IP址', ipData.ip, '#08C77A'),
+      buildRow('location.circle.fill','位置', ipData.country, '#3599FA'),
       buildRow('antenna.radiowaves.left.and.right.circle.fill','服务', ipData.connection?.isp || '-', '#998EE3'),
-      buildRow('internaldrive.fill','检测', typeText, '#5AC8FA')
+      buildRow('internaldrive.fill','检测', typeText, '#D48388')
     ]
   };
 }
@@ -106,8 +106,9 @@ function buildRow(symbol, label, value, color) {
       },
       {
         type: 'text',
-        text: `${label}：`,
-        font: { size: 14 }
+        text: `${label}`,
+        font: { size: 14 },
+        textColor: color
       },
       {
         type: 'text',
