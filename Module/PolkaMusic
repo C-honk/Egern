@@ -1,10 +1,5 @@
 name: 波点音乐
-description: 更新于2026年3月19日
-
-body_rewrites:
-- response_jq:
-    match: ^https:\/\/bd-api\.kuwo\.cn\/api\/voice\/room\/v2\/sidebar
-    filter: .data.sidebar|=map(select(.id|IN(1,17,18,21,26,28,31,32,33)|not)|.coverGif=""|if.id==4 then.name="开车好歌"elif.id==10 then.name="睡前轻松"elif.id==25 then.name="城市漫步"elif.id==27 then.name="次元精选"elif.id==30 then.name="通勤好听"elif.id==3 then.name="深夜放松"else. end)
+description: 更新于2026年3月26日
 
 map_locals:
 - match: ^https:\/\/ab-bodian\.kuwo\.cn\/abtest\/ui\/info
@@ -45,14 +40,14 @@ map_locals:
 
 scriptings:
 - http_response:
-    name: 解锁播放
+    name: 播放处理
     match: ^https:\/\/bd-api\.kuwo\.cn\/api\/(play\/music\/v2\/(audioUrl|checkRight)|service\/music\/info)
     script_url: https://raw.githubusercontent.com/WeiGiegie/666/main/bdyy.js
     timeout: 10
     body_required: true
 - http_response:
-    name: 配置会员
-    match: ^https:\/\/bd-api\.kuwo\.cn\/api\/(ucenter\/users\/(pub|login)|advert\/free\/config|service\/(global\/config\/scene|home\/index)|play\/sound\/effect\/list)
+    name: 配置处理
+    match: ^https:\/\/bd-api\.kuwo\.cn\/api\/((ucenter\/users\/(pub|login)|advert\/free\/config|service\/(global\/config\/scene|home\/index)|play\/sound\/effect\/list)|voice\/room\/v2\/sidebar)
     script_url: https://github.com/C-honk/Egern/raw/refs/heads/main/Js/Polka.js
     timeout: 10
     body_required: true
