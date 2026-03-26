@@ -1,10 +1,12 @@
+// 2026.03.26 09:30
+
 export default async function (ctx) {
   let info = null;
   let errorMessage = null;
 
   try {
     const res = await ctx.http.get(ctx.env.URL, {
-      headers: { 'User-Agent': 'clash.meta' }
+      headers: { 'User-Agent': 'clash.meta/v1.19.16' }
     });
 
     if (res.status === 200) {
@@ -12,16 +14,19 @@ export default async function (ctx) {
 
       if (header) {
         const data = Object.fromEntries(
-          header.split(';').map(i => i.trim().split('='))
+          header.split(';')
+            .map(i => i.trim().split('='))
+            .filter(i => i.length === 2)
         );
 
         const upload = parseInt(data.upload || 0);
         const download = parseInt(data.download || 0);
         const total = parseInt(data.total || 0);
-        const expireTime = parseInt(data.expire);
+        const expireTime = Number(data.expire || 0);
 
         const used = upload + download;
-        const remain = total - used;
+        const remain = Math.max(0, total - used);
+        const ratio = total > 0 ? Math.min(1, used / total) : 0;
 
         const format = (v) => {
           if (!v) return '0 B';
@@ -31,19 +36,22 @@ export default async function (ctx) {
             v /= 1024;
             i++;
           }
-          return (v % 1 === 0 ? v : v.toFixed(2)) + ' ' + units[i];
+          return (v % 1 === 0 ? v : v.toFixed(1)) + ' ' + units[i];
         };
+
+        const pad = n => String(n).padStart(2, '0');
 
         info = {
           total: format(total),
           used: format(used),
           remain: format(remain),
-          expire: expireTime && expireTime > 0
+          ratio,
+          expire: expireTime > 0
             ? (() => {
                 const d = new Date(expireTime * 1000);
-                return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+                return `到期${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
               })()
-            : '订阅永久'
+            : '永久'
         };
       } else {
         errorMessage = '无流量信息';
@@ -55,28 +63,26 @@ export default async function (ctx) {
     errorMessage = e.message || '请求失败';
   }
 
-  const colorMap = {
-    total: '#4891E9',
-    used: '#FF9500',
-    remain: '#09D180',
-    expire: '#DE5858'
-  };
+  const progressGradient = !info
+    ? ['#22D1C9', '#359BFF']
+    : info.ratio > 0.9
+    ? ['#FF3B30', '#FF6B6B']
+    : info.ratio > 0.7
+    ? ['#FF9500', '#FFCC00']
+    : ['#22D1C9', '#359BFF'];
 
-  const errorColor = '#FF3B30';
+  const progressShadowColor = !info
+    ? '#22D1C9'
+    : info.ratio > 0.9
+    ? '#FF3B30'
+    : info.ratio > 0.7
+    ? '#FF9500'
+    : '#22D1C9';
 
   return {
     type: 'widget',
-    refreshAfterDate: new Date(Date.now() + 300 * 1000),
-    backgroundGradient: {
-      type: 'linear',
-      colors: [
-        { light: '#EEEEEE', dark: '#252525' },
-        { light: '#C5DAF3', dark: '#2F3A46' }
-      ],
-      stops: [0, 1.0],
-      startPoint: { x: 0, y: 0 },
-      endPoint: { x: 1, y: 1 }
-    },
+    refreshAfter: new Date(Date.now() + 300 * 1000).toISOString(),
+    backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
     padding: 17,
     gap: 10,
     children: [
@@ -88,25 +94,23 @@ export default async function (ctx) {
         children: [
           {
             type: 'image',
-            src: 'sf-symbol:antenna.radiowaves.left.and.right.circle.fill',
+            src: 'sf-symbol:chart.bar.fill',
             width: 14,
             height: 14
           },
           {
             type: 'text',
-            text: errorMessage ? '订阅异常' : ctx.env['备注'] || '订阅流量',
+            text: errorMessage ? '请求失败' : ctx.env['备注'] || '订阅流量',
             font: { size: 14, weight: 'regular' },
-            textColor: errorMessage
-              ? errorColor
-              : { light: '#1C1C1E', dark: '#FFFFFF' }
+            textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
           },
           { type: 'spacer' },
           {
             type: 'text',
-            text: new Date().toTimeString().slice(0, 5),
+            text: info ? info.expire : '--',
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#545454', dark: '#D0D0D0' },
-            lineLimit: 1
+            textColor: { light: '#414141', dark: '#DEDEDE' },
+            maxLines: 1
           }
         ]
       },
@@ -114,63 +118,96 @@ export default async function (ctx) {
         type: 'stack',
         height: 1,
         backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' },
-        borderRadius: 0.5
+        borderRadius: 1
       },
-      ...(errorMessage
-        ? [
+      
+      ...[
+        {
+          type: 'stack',
+          direction: 'row',
+          height: 13,
+          borderRadius: 5,
+          backgroundColor: { light: '#E5E5EA', dark: '#3A3A3C' },
+          margin: [0, 0, 5, 0],
+          children: [
             {
               type: 'stack',
-              direction: 'row',
-              alignItems: 'center',
-              gap: 8,
-              children: [
-                {
-                  type: 'text',
-                  text: errorMessage,
-                  font: { size: 14, weight: 'regular' },
-                  textColor: errorColor,
-                  lineLimit: 2
-                }
-              ]
+              height: 13,
+              flex: Math.max(0.02, info?.ratio || 0),
+              backgroundGradient: {
+                type: 'linear',
+                colors: progressGradient,
+                startPoint: { x: 0, y: 0 },
+                endPoint: { x: 1, y: 0 }
+              },
+              shadowColor: progressShadowColor,
+              shadowRadius: 4,
+              shadowOffset: { x: 0, y: 2 }
+            },
+            {
+              type: 'stack',
+              height: 10,
+              flex: 1 - (info?.ratio || 0),
+              backgroundColor: { light: '#E5E5EA', dark: '#3A3A3C' }
             }
           ]
-        : [
-            row('icloud.circle.fill', '总量', info.total, colorMap.total),
-            row('chart.line.uptrend.xyaxis.circle.fill', '已用', info.used, colorMap.used),
-            row('chart.pie.fill', '剩余', info.remain, colorMap.remain),
-            row('calendar.circle.fill', '到期', info.expire, colorMap.expire)
-          ])
+        },
+        {
+          type: 'stack',
+          direction: 'row',
+          gap: 5,
+          padding: [10, 10],
+          backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
+          borderRadius: 12,
+          children: [
+            card('全部', info?.total || '-', '#07A0F4'),
+            divider(),
+            card('已用', info?.used || '-', '#EC9064'),
+            divider(),
+            card('剩余', info?.remain || '-', '#4ECA74')
+          ]
+        }
+      ]
     ]
   };
 }
 
-function row(icon, label, value, color) {
+function card(label, value, color) {
   return {
     type: 'stack',
-    direction: 'row',
+    direction: 'column',
+    flex: 1,
+    gap: 5,
+    padding: [4, 6],
+    borderRadius: 10,
     alignItems: 'center',
-    gap: 8,
     children: [
       {
-        type: 'image',
-        src: `sf-symbol:${icon}`,
-        width: 14,
-        height: 14,
-        color: color
-      },
-      {
         type: 'text',
-        text: `${label}：`,
-        font: { size: 14, weight: 'regular' },
-        textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
+        text: label,
+        font: { size: 12, weight: 'regular' },
+        textColor: { light: '#3C3C43', dark: '#EBEBF0' },
+        textAlign: 'center'
       },
       {
         type: 'text',
         text: value,
-        font: { size: 14, weight: 'regular' },
-        textColor: { light: '#1C1C1E', dark: '#E5E5E7' },
-        lineLimit: 1
+        font: { size: 12, weight: 'regular' },
+        textColor: color,
+        maxLines: 1,
+        minScale: 0.6,
+        textAlign: 'center'
       }
     ]
+  };
+}
+
+function divider() {
+  return {
+    type: 'stack',
+    width: 1,
+    height: 30,
+    alignSelf: 'center',
+    backgroundColor: { light: '#D1D1D6', dark: '#3A3A3C' }
   };
 }
