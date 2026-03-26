@@ -1,8 +1,8 @@
-// 2026.03.27 02:08
+// 2026.03.27 07:25
 
 export default async function (ctx) {
-  let info = null;
-  let errorMessage = null;
+  let info = null,
+    errorMessage = null;
 
   try {
     const res = await ctx.http.get(ctx.env.URL, {
@@ -11,10 +11,10 @@ export default async function (ctx) {
 
     if (res.status === 200) {
       const header = res.headers.get('subscription-userinfo');
-
       if (header) {
         const data = Object.fromEntries(
-          header.split(';')
+          header
+            .split(';')
             .map(i => i.trim().split('='))
             .filter(i => i.length === 2)
         );
@@ -28,7 +28,7 @@ export default async function (ctx) {
         const remain = Math.max(0, total - used);
         const ratio = total > 0 ? Math.min(1, used / total) : 0;
 
-        const format = (v) => {
+        const format = v => {
           if (!v) return '0 B';
           const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
           let i = 0;
@@ -46,12 +46,15 @@ export default async function (ctx) {
           used: format(used),
           remain: format(remain),
           ratio,
-          expire: expireTime > 0
-            ? (() => {
-                const d = new Date(expireTime * 1000);
-                return `到期${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
-              })()
-            : '永久'
+          expire:
+            expireTime > 0
+              ? (() => {
+                  const d = new Date(expireTime * 1000);
+                  return `到期${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(
+                    d.getDate()
+                  )}`;
+                })()
+              : '永久'
         };
       } else {
         errorMessage = '无流量信息';
@@ -63,21 +66,13 @@ export default async function (ctx) {
     errorMessage = e.message || '请求失败';
   }
 
-  const progressGradient = !info
-    ? ['#22D1C9', '#359BFF']
+  const progressColor = !info
+    ? '#20C9C1'
     : info.ratio > 0.9
-    ? ['#FF3B30', '#FF6B6B']
+    ? '#E54C45'
     : info.ratio > 0.7
-    ? ['#FF9500', '#FFCC00']
-    : ['#22D1C9', '#359BFF'];
-
-  const progressShadowColor = !info
-    ? '#22D1C9'
-    : info.ratio > 0.9
-    ? '#FF3B30'
-    : info.ratio > 0.7
-    ? '#FF9500'
-    : '#22D1C9';
+    ? '#E59445'
+    : '#549EF2';
 
   return {
     type: 'widget',
@@ -92,12 +87,7 @@ export default async function (ctx) {
         alignItems: 'center',
         gap: 6,
         children: [
-          {
-            type: 'image',
-            src: 'sf-symbol:chart.bar.fill',
-            width: 14,
-            height: 14
-          },
+          { type: 'image', src: 'sf-symbol:chart.bar.fill', width: 14, height: 14 },
           {
             type: 'text',
             text: errorMessage ? '请求失败' : ctx.env['备注'] || '订阅流量',
@@ -114,60 +104,35 @@ export default async function (ctx) {
           }
         ]
       },
+      { type: 'stack', height: 1, backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' }, borderRadius: 1 },
       {
         type: 'stack',
-        height: 1,
-        backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' },
-        borderRadius: 1
+        direction: 'row',
+        height: 13,
+        borderRadius: 999,
+        clip: true,
+        backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
+        margin: [0, 0, 5, 0],
+        children: [
+          { type: 'stack', height: 13, flex: info?.ratio || 0, minWidth: 6, backgroundColor: progressColor },
+          { type: 'stack', height: 13, flex: 1 - (info?.ratio || 0), backgroundColor: 'transparent' }
+        ]
       },
-      
-      ...[
-        {
-          type: 'stack',
-          direction: 'row',
-          height: 13,
-          borderRadius: 5,
-          backgroundColor: { light: '#E5E5EA', dark: '#3A3A3C' },
-          margin: [0, 0, 5, 0],
-          children: [
-            {
-              type: 'stack',
-              height: 13,
-              flex: info?.ratio || 0,
-              backgroundGradient: {
-                type: 'linear',
-                colors: progressGradient,
-                startPoint: { x: 0, y: 0 },
-                endPoint: { x: 1, y: 0 }
-              },
-              shadowColor: progressShadowColor,
-              shadowRadius: 4,
-              shadowOffset: { x: 0, y: 2 }
-            },
-            {
-              type: 'stack',
-              height: 10,
-              flex: 1 - (info?.ratio || 0),
-              backgroundColor: { light: '#E5E5EA', dark: '#3A3A3C' }
-            }
-          ]
-        },
-        {
-          type: 'stack',
-          direction: 'row',
-          gap: 5,
-          padding: [10, 10],
-          backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
-          borderRadius: 12,
-          children: [
-            card('全部', info?.total || '-', '#07A0F4'),
-            divider(),
-            card('已用', info?.used || '-', '#EC9064'),
-            divider(),
-            card('剩余', info?.remain || '-', '#4ECA74')
-          ]
-        }
-      ]
+      {
+        type: 'stack',
+        direction: 'row',
+        gap: 5,
+        padding: [10, 10],
+        backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
+        borderRadius: 12,
+        children: [
+          card('全部', info?.total || '-', '#7587FE'),
+          divider(),
+          card('已用', info?.used || '-', progressColor),
+          divider(),
+          card('剩余', info?.remain || '-', '#54CCB5')
+        ]
+      }
     ]
   };
 }
@@ -182,22 +147,8 @@ function card(label, value, color) {
     borderRadius: 10,
     alignItems: 'center',
     children: [
-      {
-        type: 'text',
-        text: label,
-        font: { size: 12, weight: 'regular' },
-        textColor: { light: '#3C3C43', dark: '#EBEBF0' },
-        textAlign: 'center'
-      },
-      {
-        type: 'text',
-        text: value,
-        font: { size: 12, weight: 'regular' },
-        textColor: color,
-        maxLines: 1,
-        minScale: 0.6,
-        textAlign: 'center'
-      }
+      { type: 'text', text: label, font: { size: 12, weight: 'medium' }, textColor: { light: '#5C5C5C', dark: '#D2D2D6' }, textAlign: 'center' },
+      { type: 'text', text: value, font: { size: 12, weight: 'medium' }, textColor: color, maxLines: 1, minScale: 0.6, textAlign: 'center' }
     ]
   };
 }
