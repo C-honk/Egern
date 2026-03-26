@@ -1,4 +1,4 @@
-// 2026.03.26 09:30
+// 2026.03.27 02:08
 
 export default async function (ctx) {
   let info = null;
@@ -133,7 +133,7 @@ export default async function (ctx) {
             {
               type: 'stack',
               height: 13,
-              flex: Math.max(0.02, info?.ratio || 0),
+              flex: info?.ratio || 0,
               backgroundGradient: {
                 type: 'linear',
                 colors: progressGradient,
