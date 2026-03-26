@@ -1,9 +1,28 @@
-//2026.03.25 04:29
+//2026.03.26 09:28
 
 export default async function (ctx) {
-  const ipData = await (await ctx.http.get('https://ipwho.is/?lang=zh-CN')).json();
+  let ipData, riskData;
+  let failed = false;
 
-  let displayIP = ipData.ip;
+  try {
+    ipData = await (await ctx.http.get('https://ipwho.is/?lang=zh-CN')).json();
+    riskData = await (await ctx.http.get('http://my.ippure.com/v1/info')).json();
+  } catch (e) {
+    failed = true;
+  }
+
+  if (!ipData) {
+    ipData = {
+      ip: '-',
+      country: '-',
+      connection: { isp: '-' }
+    };
+  }
+  if (!riskData) {
+    riskData = { isResidential: null };
+  }
+
+  let displayIP = ipData.ip || '-';
   if (ctx.env.IP === 'true' || ctx.env.IP === true) {
     const sep = displayIP.includes(':') ? ':' : '.';
     const parts = displayIP.split(sep);
@@ -14,9 +33,12 @@ export default async function (ctx) {
   }
   ipData.ip = displayIP;
 
-  const riskData = await (await ctx.http.get('http://my.ippure.com/v1/info')).json();
-  const isResidential = riskData.isResidential;
-  const typeText = isResidential ? '家宽住宅IP' : '机房广播IP';
+  const typeText =
+    riskData.isResidential === null
+      ? '-'
+      : riskData.isResidential
+      ? '家宽住宅IP'
+      : '机房广播IP';
 
   return {
     type: 'widget',
@@ -42,7 +64,7 @@ export default async function (ctx) {
           },
           {
             type: 'text',
-            text: '节点信息',
+            text: failed ? '请求失败' : '节点信息',
             font: { size: 14, weight: 'regular' },
             textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
           },
@@ -51,48 +73,19 @@ export default async function (ctx) {
             type: 'text',
             text: new Date().toTimeString().slice(0, 5),
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#414141', dark: '#DEDEDE' },
-            lineLimit: 1
+            textColor: { light: '#414141', dark: '#DEDEDE' }
           }
         ]
       },
       {
         type: 'stack',
         height: 1,
-        backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' },
-        borderRadius: 0.5
+        backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' }
       },
       buildRow('globe.asia.australia.fill','IP址', ipData.ip, '#09D180'),
       buildRow('location.circle.fill','位置', ipData.country, '#4891E9'),
-      buildRow('antenna.radiowaves.left.and.right.circle.fill','运营', ipData.connection.isp, '#998EE3'),
-      {
-        type: 'stack',
-        direction: 'row',
-        alignItems: 'center',
-        gap: 8,
-        children: [
-          {
-            type: 'image',
-            src: 'sf-symbol:internaldrive.fill',
-            width: 14,
-            height: 14,
-            color: '#5AC8FA'
-          },
-          {
-            type: 'text',
-            text: '检测：',
-            font: { size: 14, weight: 'regular' },
-            textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
-          },
-          {
-            type: 'text',
-            text: typeText,
-            font: { size: 14, weight: 'regular' },
-            textColor: { light: '#1C1C1E', dark: '#E5E5E7' },
-            lineLimit: 1
-          }
-        ]
-      }
+      buildRow('antenna.radiowaves.left.and.right.circle.fill','服务', ipData.connection?.isp || '-', '#998EE3'),
+      buildRow('internaldrive.fill','检测', typeText, '#5AC8FA')
     ]
   };
 }
@@ -114,14 +107,12 @@ function buildRow(symbol, label, value, color) {
       {
         type: 'text',
         text: `${label}：`,
-        font: { size: 14, weight: 'regular' },
-        textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
+        font: { size: 14 }
       },
       {
         type: 'text',
         text: value,
-        font: { size: 14, weight: 'regular' },
-        textColor: { light: '#1C1C1E', dark: '#E5E5E7' },
+        font: { size: 14 },
         lineLimit: 1
       }
     ]
