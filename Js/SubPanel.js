@@ -97,7 +97,7 @@ export default async function (ctx) {
           { type: 'spacer' },
           {
             type: 'text',
-            text: info ? info.expire : '--',
+            text: info ? info.expire : '-',
             font: { size: 13, weight: 'regular' },
             textColor: { light: '#414141', dark: '#DEDEDE' },
             maxLines: 1
