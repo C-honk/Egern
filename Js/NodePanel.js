@@ -1,4 +1,4 @@
-// 2026.03.27 03:30
+// 2026.03.28 04:13
 
 export default async function (ctx) {
   let ipData, riskData;
@@ -99,7 +99,7 @@ function buildRow(symbol, label, value, color) {
     children: [
       {
         type: 'image',
-        src: `sf-symbol:${symbol}`,
+        src: `sf-symbol:更新于${symbol}`,
         width: 14,
         height: 14,
         color: color
