@@ -1,4 +1,4 @@
-// 2026.03.28 04:13
+// 2026.03.28 04:17
 
 export default async function (ctx) {
   let ipData, riskData;
@@ -71,7 +71,7 @@ export default async function (ctx) {
           { type: 'spacer' },
           {
             type: 'text',
-            text: new Date().toTimeString().slice(0, 5),
+            text: '更新于 ' + new Date().toTimeString().slice(0, 5),
             font: { size: 13, weight: 'regular' },
             textColor: { light: '#414141', dark: '#DEDEDE' }
           }
@@ -99,7 +99,7 @@ function buildRow(symbol, label, value, color) {
     children: [
       {
         type: 'image',
-        src: `sf-symbol:更新于${symbol}`,
+        src: `sf-symbol:${symbol}`,
         width: 14,
         height: 14,
         color: color
