@@ -71,7 +71,7 @@ export default async function (ctx) {
           { type: 'spacer' },
           {
             type: 'text',
-            text: '更新于 ' + new Date().toTimeString().slice(0, 5),
+            text: new Date().toTimeString().slice(0, 5),
             font: { size: 13, weight: 'regular' },
             textColor: { light: '#414141', dark: '#DEDEDE' }
           }
