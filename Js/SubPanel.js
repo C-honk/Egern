@@ -1,4 +1,4 @@
-// 2026.03.27 08:11
+// 2026.03.28 04:09
 
 export default async function (ctx) {
   let info = null,
@@ -19,10 +19,10 @@ export default async function (ctx) {
             .filter(i => i.length === 2)
         );
 
-        const upload = parseInt(data.upload || 0);
-        const download = parseInt(data.download || 0);
-        const total = parseInt(data.total || 0);
-        const expireTime = Number(data.expire || 0);
+        const upload = parseInt(data.upload || 0, 10) || 0;
+        const download = parseInt(data.download || 0, 10) || 0;
+        const total = parseInt(data.total || 0, 10) || 0;
+        const expireTime = Number(data.expire || 0) || 0;
 
         const used = upload + download;
         const remain = Math.max(0, total - used);
@@ -54,7 +54,7 @@ export default async function (ctx) {
                     d.getDate()
                   )}`;
                 })()
-              : '永久'
+              : '永久订阅'
         };
       } else {
         errorMessage = '无流量信息';
@@ -79,12 +79,13 @@ export default async function (ctx) {
     refreshAfter: new Date(Date.now() + 300 * 1000).toISOString(),
     backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
     padding: 17,
-    gap: 10,
+    gap: 13,
     children: [
       {
         type: 'stack',
         direction: 'row',
         alignItems: 'center',
+        height: 5,
         gap: 6,
         children: [
           { type: 'image', src: 'sf-symbol:chart.bar.fill', width: 14, height: 14 },
@@ -99,8 +100,7 @@ export default async function (ctx) {
             type: 'text',
             text: info ? info.expire : '-',
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#414141', dark: '#DEDEDE' },
-            maxLines: 1
+            textColor: { light: '#414141', dark: '#DEDEDE' }
           }
         ]
       },
@@ -108,25 +108,25 @@ export default async function (ctx) {
       {
         type: 'stack',
         direction: 'row',
-        height: 13,
+        height: 12,
         borderRadius: 6,
         clip: true,
         backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
         margin: [0, 0, 5, 0],
         children: [
-          { type: 'stack', height: 13, flex: info?.ratio || 0, minWidth: 6, backgroundColor: progressColor },
-          { type: 'stack', height: 13, flex: 1 - (info?.ratio || 0), backgroundColor: 'transparent' }
+          { type: 'stack', height: 12, flex: info?.ratio || 0, minWidth: 6, backgroundColor: progressColor },
+          { type: 'stack', height: 12, flex: 1 - (info?.ratio || 0), backgroundColor: 'transparent' }
         ]
       },
       {
         type: 'stack',
         direction: 'row',
-        gap: 5,
+        gap: 10,
         padding: [10, 10],
         backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
         borderRadius: 12,
         children: [
-          card('全部', info?.total || '-', '#7587FE'),
+          card('全部', info?.total || '-', '#A9ACFE'),
           divider(),
           card('已用', info?.used || '-', progressColor),
           divider(),
@@ -142,7 +142,7 @@ function card(label, value, color) {
     type: 'stack',
     direction: 'column',
     flex: 1,
-    gap: 5,
+    gap: 6,
     padding: [4, 6],
     borderRadius: 10,
     alignItems: 'center',
