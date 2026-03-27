@@ -1,4 +1,4 @@
-// 2026.03.27 07:25
+// 2026.03.27 08:11
 
 export default async function (ctx) {
   let info = null,
@@ -67,11 +67,11 @@ export default async function (ctx) {
   }
 
   const progressColor = !info
-    ? '#20C9C1'
+    ? '#9A9AD4'
     : info.ratio > 0.9
-    ? '#E54C45'
+    ? '#E86253'
     : info.ratio > 0.7
-    ? '#E59445'
+    ? '#E8985A'
     : '#549EF2';
 
   return {
@@ -109,7 +109,7 @@ export default async function (ctx) {
         type: 'stack',
         direction: 'row',
         height: 13,
-        borderRadius: 999,
+        borderRadius: 6,
         clip: true,
         backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
         margin: [0, 0, 5, 0],
@@ -130,7 +130,7 @@ export default async function (ctx) {
           divider(),
           card('已用', info?.used || '-', progressColor),
           divider(),
-          card('剩余', info?.remain || '-', '#54CCB5')
+          card('剩余', info?.remain || '-', '#64C298')
         ]
       }
     ]
