@@ -1,8 +1,6 @@
-// 2026.03.28 04:09
-
 export default async function (ctx) {
   let info = null,
-    errorMessage = null;
+      errorMessage = null;
 
   try {
     const res = await ctx.http.get(ctx.env.URL, {
@@ -13,8 +11,7 @@ export default async function (ctx) {
       const header = res.headers.get('subscription-userinfo');
       if (header) {
         const data = Object.fromEntries(
-          header
-            .split(';')
+          header.split(';')
             .map(i => i.trim().split('='))
             .filter(i => i.length === 2)
         );
@@ -27,10 +24,11 @@ export default async function (ctx) {
         const used = upload + download;
         const remain = Math.max(0, total - used);
         const ratio = total > 0 ? Math.min(1, used / total) : 0;
+        const percent = Math.round(ratio * 100);
 
         const format = v => {
           if (!v) return '0 B';
-          const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+          const units = ['B', 'KB', 'MB', 'GB', 'TB'];
           let i = 0;
           while (v >= 1024 && i < units.length - 1) {
             v /= 1024;
@@ -46,15 +44,13 @@ export default async function (ctx) {
           used: format(used),
           remain: format(remain),
           ratio,
-          expire:
-            expireTime > 0
-              ? (() => {
-                  const d = new Date(expireTime * 1000);
-                  return `到期${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(
-                    d.getDate()
-                  )}`;
-                })()
-              : '永久订阅'
+          percent,
+          expire: expireTime > 0
+            ? (() => {
+                const d = new Date(expireTime * 1000);
+                return `${d.getFullYear()}.${pad(d.getMonth() + 1)}.${pad(d.getDate())}`;
+              })()
+            : '永久订阅'
         };
       } else {
         errorMessage = '无流量信息';
@@ -69,24 +65,23 @@ export default async function (ctx) {
   const progressColor = !info
     ? '#9A9AD4'
     : info.ratio > 0.9
-    ? '#E86253'
-    : info.ratio > 0.7
-    ? '#E8985A'
-    : '#549EF2';
+      ? '#E86253'
+      : info.ratio > 0.7
+        ? '#E8985A'
+        : '#2D9BEB';
 
   return {
     type: 'widget',
-    refreshAfter: new Date(Date.now() + 300 * 1000).toISOString(),
+    refreshAfter: new Date(Date.now() + 300000).toISOString(),
     backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
-    padding: 17,
-    gap: 13,
+    padding: 16,
     children: [
       {
         type: 'stack',
         direction: 'row',
         alignItems: 'center',
-        height: 5,
         gap: 6,
+        padding: [-4, 0, 0, 0],
         children: [
           { type: 'image', src: 'sf-symbol:chart.bar.fill', width: 14, height: 14 },
           {
@@ -98,39 +93,56 @@ export default async function (ctx) {
           { type: 'spacer' },
           {
             type: 'text',
-            text: info ? info.expire : '-',
+            text: info ? `到期${info.expire}` : '无数据',
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#414141', dark: '#DEDEDE' }
+            textColor: { light: '#666666', dark: '#AAAAAA' }
           }
         ]
       },
-      { type: 'stack', height: 1, backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' }, borderRadius: 1 },
+      { type: 'spacer' },
       {
         type: 'stack',
         direction: 'row',
-        height: 12,
-        borderRadius: 6,
-        clip: true,
-        backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
-        margin: [0, 0, 5, 0],
+        height: 15,
+        alignItems: 'center',
         children: [
-          { type: 'stack', height: 12, flex: info?.ratio || 0, minWidth: 6, backgroundColor: progressColor },
-          { type: 'stack', height: 12, flex: 1 - (info?.ratio || 0), backgroundColor: 'transparent' }
+          { type: 'stack', flex: Math.max(info?.ratio - 0.01, 0) },
+          {
+            type: 'text',
+            text: info ? `${info.percent}%` : '-',
+            font: { size: 11, weight: 'semibold' },
+            textColor: progressColor
+          },
+          { type: 'stack', flex: 1 - (info?.ratio || 0) }
         ]
       },
       {
         type: 'stack',
         direction: 'row',
-        gap: 10,
-        padding: [10, 10],
-        backgroundColor: { light: '#F2F2F7', dark: '#2C2C2E' },
+        height: 9,
+        borderRadius: 4,
+        clip: true,
+        backgroundColor: { light: '#EDEDF0', dark: '#2C2C2E' },
+        children: [
+          { type: 'stack', height: 20, flex: Math.max(0.001, info?.ratio || 0), backgroundColor: progressColor },
+          { type: 'stack', height: 20, flex: 1 - (info?.ratio || 0), backgroundColor: 'transparent' }
+        ]
+      },
+      { type: 'spacer' },
+      {
+        type: 'stack',
+        direction: 'row',
+        gap: 6,
+        height: 60,
+        padding: [6, 8],
+        backgroundColor: { light: '#F4F4F6', dark: '#2C2C2E' },
         borderRadius: 12,
         children: [
-          card('全部', info?.total || '-', '#A9ACFE'),
+          card('全部', info?.total || '-', '#11C9CA'),
           divider(),
           card('已用', info?.used || '-', progressColor),
           divider(),
-          card('剩余', info?.remain || '-', '#64C298')
+          card('剩余', info?.remain || '-', '#8996FF')
         ]
       }
     ]
@@ -142,13 +154,12 @@ function card(label, value, color) {
     type: 'stack',
     direction: 'column',
     flex: 1,
-    gap: 6,
-    padding: [4, 6],
-    borderRadius: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
     children: [
-      { type: 'text', text: label, font: { size: 12, weight: 'medium' }, textColor: { light: '#5C5C5C', dark: '#D2D2D6' }, textAlign: 'center' },
-      { type: 'text', text: value, font: { size: 12, weight: 'medium' }, textColor: color, maxLines: 1, minScale: 0.6, textAlign: 'center' }
+      { type: 'text', text: label, font: { size: 12 }, textColor: { light: '#29292B', dark: '#CCCCCC' } },
+      { type: 'text', text: value, font: { size: 12, weight: 'regular' }, textColor: color, maxLines: 1, minScale: 0.7 }
     ]
   };
 }
@@ -157,8 +168,8 @@ function divider() {
   return {
     type: 'stack',
     width: 1,
-    height: 30,
+    height: 27,
     alignSelf: 'center',
-    backgroundColor: { light: '#D1D1D6', dark: '#3A3A3C' }
+    backgroundColor: { light: '#DDD', dark: '#3A3A3C' }
   };
 }
