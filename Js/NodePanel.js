@@ -1,5 +1,3 @@
-// 2026.03.28 04:17
-
 export default async function (ctx) {
   let ipData, riskData;
   let failed = false;
@@ -11,29 +9,19 @@ export default async function (ctx) {
     failed = true;
   }
 
-  if (!ipData) {
-    ipData = {
-      ip: '-',
-      country: '-',
-      connection: { isp: '-' }
-    };
-  }
-  if (!riskData) {
-    riskData = { isResidential: null };
-  }
+  if (!ipData) ipData = { ip: '-', country: '-', region: '-', connection: { isp: '-' } };
+  if (!riskData) riskData = { isResidential: null };
 
   let displayIP = ipData.ip || '-';
   if (ctx.env.IP === 'true' || ctx.env.IP === true) {
     const sep = displayIP.includes(':') ? ':' : '.';
     const parts = displayIP.split(sep);
-    if (parts.length > 1) {
-      parts[parts.length - 1] = '*'.repeat(parts[parts.length - 1].length);
-      displayIP = parts.join(sep);
-    }
+    if (parts.length > 1) parts[parts.length - 1] = '*'.repeat(parts[parts.length - 1].length);
+    displayIP = parts.join(sep);
   }
   ipData.ip = displayIP;
 
-  const typeText =
+  const ipTypeText =
     riskData.isResidential === null
       ? '-'
       : riskData.isResidential
@@ -42,50 +30,44 @@ export default async function (ctx) {
 
   return {
     type: 'widget',
-    refreshAfterDate: new Date(Date.now() + 60 * 1000),
-    backgroundColor: {
-      light: '#FFFFFF',
-      dark: '#1E1E1E'
-    },
-    padding: 17,
-    gap: 10,
+    refreshAfter: new Date(Date.now() + 300000).toISOString(),
+    backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
+    padding: 16,
     children: [
       {
         type: 'stack',
         direction: 'row',
         alignItems: 'center',
         gap: 6,
+        padding: [-4, 0, 0, 0],
         children: [
-          {
-            type: 'image',
-            src: 'sf-symbol:globe',
-            width: 14,
-            height: 14
-          },
+          { type: 'image', src: 'sf-symbol:globe.asia.australia.fill', width: 14, height: 14 },
           {
             type: 'text',
             text: failed ? '请求失败' : '节点信息',
-            font: { size: 14, weight: 'regular' },
-            textColor: { light: '#1C1C1E', dark: '#FFFFFF' }
+            font: { size: 14, weight: 'regular' }
           },
           { type: 'spacer' },
           {
             type: 'text',
             text: new Date().toTimeString().slice(0, 5),
             font: { size: 13, weight: 'regular' },
-            textColor: { light: '#414141', dark: '#DEDEDE' }
+            textColor: { light: '#666666', dark: '#AAAAAA' }
           }
         ]
       },
       {
         type: 'stack',
-        height: 1,
-        backgroundColor: { light: '#1C1C1E', dark: '#FFFFFF' }
-      },
-      buildRow('globe.asia.australia.fill','IP址', ipData.ip, '#08C77A'),
-      buildRow('location.circle.fill','位置', ipData.country, '#3599FA'),
-      buildRow('antenna.radiowaves.left.and.right.circle.fill','服务', ipData.connection?.isp || '-', '#998EE3'),
-      buildRow('internaldrive.fill','检测', typeText, '#D48388')
+        direction: 'column',
+        gap: 1,
+        padding: [18, 0, -4, 0],
+        children: [
+          buildRow('globe', 'IP址：', ipData.ip, '#29C18B'),
+          buildRow('location.circle.fill', '位置：', `${ipData.country}`, '#3599FA'),
+          buildRow('antenna.radiowaves.left.and.right.circle.fill', '服务：', ipData.connection?.isp || '-', '#998EE3'),
+          buildRow('internaldrive.fill', '检测：', ipTypeText, '#D48388')
+        ]
+      }
     ]
   };
 }
@@ -97,25 +79,9 @@ function buildRow(symbol, label, value, color) {
     alignItems: 'center',
     gap: 8,
     children: [
-      {
-        type: 'image',
-        src: `sf-symbol:${symbol}`,
-        width: 14,
-        height: 14,
-        color: color
-      },
-      {
-        type: 'text',
-        text: `${label}`,
-        font: { size: 14 },
-        textColor: color
-      },
-      {
-        type: 'text',
-        text: value,
-        font: { size: 14 },
-        lineLimit: 1
-      }
+      { type: 'image', src: `sf-symbol:${symbol}`, width: 14, height: 14, color: color },
+      { type: 'text', text: label, font: { size: 14 }, flex: 0 },
+      { type: 'text', text: value, font: { size: 14 }, lineLimit: 1, flex: 1, textColor: color }
     ]
   };
 }
