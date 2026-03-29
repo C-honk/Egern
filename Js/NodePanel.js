@@ -33,7 +33,7 @@ export default async function (ctx) {
 
   return {
     type: 'widget',
-    refreshAfter: new Date(Date.now() + 3000000).toISOString(),
+    refreshAfter: new Date(Date.now() + 3600000).toISOString(),
     backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
     padding: 16,
     children: [
