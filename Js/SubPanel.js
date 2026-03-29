@@ -63,16 +63,16 @@ export default async function (ctx) {
   }
 
   const progressColor = !info
-    ? '#9A9AD4'
+    ? '#DF494A'
     : info.ratio > 0.9
-      ? '#E86253'
+      ? '#DF5F5F'
       : info.ratio > 0.7
-        ? '#E8985A'
-        : '#2D9BEB';
+        ? '#DF9260'
+        : '#7E8FDF';
 
   return {
     type: 'widget',
-    refreshAfter: new Date(Date.now() + 300000).toISOString(),
+    refreshAfter: new Date(Date.now() + 3000000).toISOString(),
     backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
     padding: 16,
     children: [
@@ -138,11 +138,11 @@ export default async function (ctx) {
         backgroundColor: { light: '#F4F4F6', dark: '#2C2C2E' },
         borderRadius: 12,
         children: [
-          card('全部', info?.total || '-', '#11C9CA'),
+          card('全部', info?.total || '-', '#DF8EA6'),
           divider(),
           card('已用', info?.used || '-', progressColor),
           divider(),
-          card('剩余', info?.remain || '-', '#8996FF')
+          card('剩余', info?.remain || '-', '#1293DF')
         ]
       }
     ]
@@ -158,8 +158,8 @@ function card(label, value, color) {
     justifyContent: 'center',
     gap: 2,
     children: [
-      { type: 'text', text: label, font: { size: 12 }, textColor: { light: '#29292B', dark: '#CCCCCC' } },
-      { type: 'text', text: value, font: { size: 12, weight: 'regular' }, textColor: color, maxLines: 1, minScale: 0.7 }
+      { type: 'text', text: label, font: { size: 12 }, textColor: { light: '#343436', dark: '#CCCCCC' } },
+      { type: 'text', text: value, font: { size: 13, weight: 'regular' }, textColor: color, maxLines: 1, minScale: 0.7 }
     ]
   };
 }
