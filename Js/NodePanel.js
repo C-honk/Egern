@@ -1,36 +1,39 @@
 export default async function (ctx) {
-  let ipData, riskData;
-  let failed = false;
+  let hasError = false;
 
-  try {
-    ipData = await (await ctx.http.get('https://ipwho.is/?lang=zh-CN')).json();
-    riskData = await (await ctx.http.get('http://my.ippure.com/v1/info')).json();
-  } catch (e) {
-    failed = true;
-  }
+  const [ipData, riskData] = await Promise.all([
+    ctx.http.get('https://ipwho.is/?lang=zh-CN').then(r => r.json()).catch(() => null),
+    ctx.http.get('http://my.ippure.com/v1/info').then(r => r.json()).catch(() => null)
+  ]).catch(() => {
+    hasError = true;
+    return [null, null];
+  });
 
-  if (!ipData) ipData = { ip: '-', country: '-', region: '-', connection: { isp: '-' } };
-  if (!riskData) riskData = { isResidential: null };
+  const ip = ipData?.ip || '-';
+  const country = ipData?.country || '-';
+  const isp = ipData?.connection?.isp || '-';
+  const isResidential = riskData?.isResidential ?? null;
 
-  let displayIP = ipData.ip || '-';
-  if (ctx.env.IP === 'true' || ctx.env.IP === true) {
+  let displayIP = ip;
+  if (ctx.env.IP === true || ctx.env.IP === 'true') {
     const sep = displayIP.includes(':') ? ':' : '.';
     const parts = displayIP.split(sep);
-    if (parts.length > 1) parts[parts.length - 1] = '*'.repeat(parts[parts.length - 1].length);
+    if (parts.length > 1) {
+      parts[parts.length - 1] = '*'.repeat(parts[parts.length - 1].length);
+    }
     displayIP = parts.join(sep);
   }
-  ipData.ip = displayIP;
 
-  const ipTypeText =
-    riskData.isResidential === null
+  const ipType =
+    isResidential === null
       ? '-'
-      : riskData.isResidential
+      : isResidential
       ? '家宽住宅IP'
       : '机房广播IP';
 
   return {
     type: 'widget',
-    refreshAfter: new Date(Date.now() + 300000).toISOString(),
+    refreshAfter: new Date(Date.now() + 3000000).toISOString(),
     backgroundColor: { light: '#FFFFFF', dark: '#1E1E1E' },
     padding: 16,
     children: [
@@ -44,44 +47,49 @@ export default async function (ctx) {
           { type: 'image', src: 'sf-symbol:globe.asia.australia.fill', width: 14, height: 14 },
           {
             type: 'text',
-            text: failed ? '请求失败' : '节点信息',
-            font: { size: 14, weight: 'regular' }
+            text: hasError ? '请求失败' : '节点信息',
+            font: { size: 14 }
           },
           { type: 'spacer' },
           {
             type: 'text',
             text: new Date().toTimeString().slice(0, 5),
-            font: { size: 13, weight: 'regular' },
-            textColor: { light: '#666666', dark: '#AAAAAA' }
+            font: { size: 13 },
+            textColor: { light: '#666', dark: '#AAA' }
           }
         ]
       },
       {
         type: 'stack',
         direction: 'column',
-        gap: 1,
-        padding: [18, 0, -4, 0],
+        gap: 6,
+        padding: [18, 0, -5, 0],
         children: [
-          buildRow('globe', 'IP址：', ipData.ip, '#29C18B'),
-          buildRow('location.circle.fill', '位置：', `${ipData.country}`, '#3599FA'),
-          buildRow('antenna.radiowaves.left.and.right.circle.fill', '服务：', ipData.connection?.isp || '-', '#998EE3'),
-          buildRow('internaldrive.fill', '检测：', ipTypeText, '#D48388')
+          row('globe', 'IP址：', displayIP, '#70C777'),
+          row('location.circle.fill', '位置：', country, '#3599FA'),
+          row('antenna.radiowaves.left.and.right.circle.fill', '服务：', isp, '#ED8585'),
+          row('internaldrive.fill', '检测：', ipType, '#61C1C3')
         ]
       }
     ]
   };
 }
 
-function buildRow(symbol, label, value, color) {
-  return {
-    type: 'stack',
-    direction: 'row',
-    alignItems: 'center',
-    gap: 8,
-    children: [
-      { type: 'image', src: `sf-symbol:${symbol}`, width: 14, height: 14, color: color },
-      { type: 'text', text: label, font: { size: 14 }, flex: 0 },
-      { type: 'text', text: value, font: { size: 14 }, lineLimit: 1, flex: 1, textColor: color }
-    ]
-  };
-}
+const row = (icon, label, value, color) => ({
+  type: 'stack',
+  direction: 'row',
+  alignItems: 'center',
+  gap: 6,
+  children: [
+    { type: 'image', src: `sf-symbol:${icon}`, width: 14, height: 14, color },
+    { type: 'text', text: label, font: { size: 14 } },
+    { 
+      type: 'text', 
+      text: value, 
+      font: { size: 14 }, 
+      flex: 1, 
+      lineLimit: 1,
+      textColor: { light: '#3C3C3C', dark: '#DDDDDD' }
+    }
+  ]
+});
